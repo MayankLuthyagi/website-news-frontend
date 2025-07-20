@@ -54,11 +54,32 @@ function SidebarNewsCard({ title, summary, url, date, source_id, source_name, ca
     // Handle image fallback - use category-based images
     useEffect(() => {
         if (!image && category) {
-            // Try category-based image with proper capitalization
+            // Try category-based image with proper mapping
             const firstCategory = category.split(',')[0].trim();
-            // Capitalize first letter for the image filename
-            const capitalizedCategory = firstCategory.charAt(0).toUpperCase() + firstCategory.slice(1).toLowerCase();
-            setImageUrl(`/images/${capitalizedCategory}.png`);
+
+            // Map category to proper image filename
+            const categoryMapping = {
+                'business': 'Business',
+                'tech': 'Tech',
+                'technology': 'Tech',
+                'world': 'World',
+                'entertainment': 'Entertainment',
+                'politics': 'Politics',
+                'sports': 'Sports',
+                'health': 'Health',
+                'education': 'Education',
+                'finance': 'Finance',
+                'national': 'India',
+                'india': 'India'
+            };
+
+            // Try exact match first, then lowercase match
+            let imageCategory = firstCategory;
+            if (categoryMapping[firstCategory.toLowerCase()]) {
+                imageCategory = categoryMapping[firstCategory.toLowerCase()];
+            }
+
+            setImageUrl(`/images/${imageCategory}.png`);
         }
     }, [image, category]);
 
@@ -68,9 +89,30 @@ function SidebarNewsCard({ title, summary, url, date, source_id, source_name, ca
             // If image fails to load, try category-based image as fallback
             if (category) {
                 const firstCategory = category.split(',')[0].trim();
-                // Capitalize first letter for the image filename
-                const capitalizedCategory = firstCategory.charAt(0).toUpperCase() + firstCategory.slice(1).toLowerCase();
-                setImageUrl(`/images/${capitalizedCategory}.png`);
+
+                // Map category to proper image filename
+                const categoryMapping = {
+                    'business': 'Business',
+                    'tech': 'Tech',
+                    'technology': 'Tech',
+                    'world': 'World',
+                    'entertainment': 'Entertainment',
+                    'politics': 'Politics',
+                    'sports': 'Sports',
+                    'health': 'Health',
+                    'education': 'Education',
+                    'finance': 'Finance',
+                    'national': 'India',
+                    'india': 'India'
+                };
+
+                // Try exact match first, then lowercase match
+                let imageCategory = firstCategory;
+                if (categoryMapping[firstCategory.toLowerCase()]) {
+                    imageCategory = categoryMapping[firstCategory.toLowerCase()];
+                }
+
+                setImageUrl(`/images/${imageCategory}.png`);
             } else {
                 // No category available, hide image
                 setImageUrl(null);

@@ -91,9 +91,32 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
     if (!image && category) {
       // Try category-based image with proper capitalization
       const firstCategory = category.split(',')[0].trim();
-      // Capitalize first letter for the image filename
-      const capitalizedCategory = firstCategory.charAt(0).toUpperCase() + firstCategory.slice(1).toLowerCase();
-      setImageUrl(`/images/${capitalizedCategory}.png`);
+      console.log('Original category:', firstCategory);
+
+      // Map category to proper image filename
+      const categoryMapping = {
+        'business': 'Business',
+        'tech': 'Tech',
+        'technology': 'Tech',
+        'world': 'World',
+        'entertainment': 'Entertainment',
+        'politics': 'Politics',
+        'sports': 'Sports',
+        'health': 'Health',
+        'education': 'Education',
+        'finance': 'Finance',
+        'national': 'India',
+        'india': 'India'
+      };
+
+      // Try exact match first, then lowercase match
+      let imageCategory = firstCategory;
+      if (categoryMapping[firstCategory.toLowerCase()]) {
+        imageCategory = categoryMapping[firstCategory.toLowerCase()];
+      }
+
+      console.log('Image category for file:', imageCategory);
+      setImageUrl(`/images/${imageCategory}.png`);
     }
   }, [image, category]);
 
@@ -103,9 +126,32 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
       // If image fails to load, try category-based image as fallback
       if (category) {
         const firstCategory = category.split(',')[0].trim();
-        // Capitalize first letter for the image filename
-        const capitalizedCategory = firstCategory.charAt(0).toUpperCase() + firstCategory.slice(1).toLowerCase();
-        setImageUrl(`/images/${capitalizedCategory}.png`);
+        console.log('Error fallback - Original category:', firstCategory);
+
+        // Map category to proper image filename
+        const categoryMapping = {
+          'business': 'Business',
+          'tech': 'Tech',
+          'technology': 'Tech',
+          'world': 'World',
+          'entertainment': 'Entertainment',
+          'politics': 'Politics',
+          'sports': 'Sports',
+          'health': 'Health',
+          'education': 'Education',
+          'finance': 'Finance',
+          'national': 'India',
+          'india': 'India'
+        };
+
+        // Try exact match first, then lowercase match
+        let imageCategory = firstCategory;
+        if (categoryMapping[firstCategory.toLowerCase()]) {
+          imageCategory = categoryMapping[firstCategory.toLowerCase()];
+        }
+
+        console.log('Error fallback - Image category:', imageCategory);
+        setImageUrl(`/images/${imageCategory}.png`);
       } else {
         // No category available, hide image
         setImageUrl(null);

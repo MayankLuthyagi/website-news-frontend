@@ -173,9 +173,29 @@ function NewsDetail() {
 
         // Use category-based image as fallback
         if (firstCategory) {
-            // Capitalize first letter for the image filename
-            const capitalizedCategory = firstCategory.charAt(0).toUpperCase() + firstCategory.slice(1).toLowerCase();
-            return `/images/${capitalizedCategory}.png`;
+            // Map category to proper image filename
+            const categoryMapping = {
+                'business': 'Business',
+                'tech': 'Tech',
+                'technology': 'Tech',
+                'world': 'World',
+                'entertainment': 'Entertainment',
+                'politics': 'Politics',
+                'sports': 'Sports',
+                'health': 'Health',
+                'education': 'Education',
+                'finance': 'Finance',
+                'national': 'India',
+                'india': 'India'
+            };
+
+            // Try exact match first, then lowercase match
+            let imageCategory = firstCategory;
+            if (categoryMapping[firstCategory.toLowerCase()]) {
+                imageCategory = categoryMapping[firstCategory.toLowerCase()];
+            }
+
+            return `/images/${imageCategory}.png`;
         }
 
         return null;
