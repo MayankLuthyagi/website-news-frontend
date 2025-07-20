@@ -1,6 +1,32 @@
-# Getting Started with Create React App
+# News Portal Frontend
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Configuration
+
+The application uses environment variables for configuration. 
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and modify as needed:
+
+```bash
+cp .env.example .env
+```
+
+Available environment variables:
+
+- `REACT_APP_SERVER_URL`: The base URL for the backend server (default: http://localhost:3000)
+
+### Server Configuration
+
+The application connects to a backend server for news data. By default, it connects to `http://localhost:3000`, but this can be changed by setting the `REACT_APP_SERVER_URL` environment variable.
+
+For production deployment, create a `.env.production` file with the appropriate server URL:
+
+```
+REACT_APP_SERVER_URL=https://your-production-server.com
+```
 
 ## Available Scripts
 
