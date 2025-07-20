@@ -173,7 +173,9 @@ function NewsDetail() {
 
         // Use category-based image as fallback
         if (firstCategory) {
-            return `/images/${firstCategory.toLowerCase()}.png`;
+            // Capitalize first letter for the image filename
+            const capitalizedCategory = firstCategory.charAt(0).toUpperCase() + firstCategory.slice(1).toLowerCase();
+            return `/images/${capitalizedCategory}.png`;
         }
 
         return null;

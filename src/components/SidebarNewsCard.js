@@ -54,9 +54,11 @@ function SidebarNewsCard({ title, summary, url, date, source_id, source_name, ca
     // Handle image fallback - use category-based images
     useEffect(() => {
         if (!image && category) {
-            // Try category-based image
-            const firstCategory = category.split(',')[0].trim().toLowerCase();
-            setImageUrl(`/images/${firstCategory}.png`);
+            // Try category-based image with proper capitalization
+            const firstCategory = category.split(',')[0].trim();
+            // Capitalize first letter for the image filename
+            const capitalizedCategory = firstCategory.charAt(0).toUpperCase() + firstCategory.slice(1).toLowerCase();
+            setImageUrl(`/images/${capitalizedCategory}.png`);
         }
     }, [image, category]);
 
@@ -65,8 +67,10 @@ function SidebarNewsCard({ title, summary, url, date, source_id, source_name, ca
             setImageError(true);
             // If image fails to load, try category-based image as fallback
             if (category) {
-                const firstCategory = category.split(',')[0].trim().toLowerCase();
-                setImageUrl(`/images/${firstCategory}.png`);
+                const firstCategory = category.split(',')[0].trim();
+                // Capitalize first letter for the image filename
+                const capitalizedCategory = firstCategory.charAt(0).toUpperCase() + firstCategory.slice(1).toLowerCase();
+                setImageUrl(`/images/${capitalizedCategory}.png`);
             } else {
                 // No category available, hide image
                 setImageUrl(null);
