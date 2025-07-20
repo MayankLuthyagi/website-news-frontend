@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Navbar from './include/Navbar';
-import NewsCard from './components/NewsCard';
 import Footer from './include/Footer';
 import './App.css';
-import Subscribe from './components/Subscribe';
-import LatestNews from './components/LatestNews';
 import AllLatestNews from './pages/AllLatestNews';
 import Home from './pages/Home';
 import NewsDetail from './pages/NewsDetail';
