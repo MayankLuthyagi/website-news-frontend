@@ -2,10 +2,11 @@
 const config = {
   // Server URL - can be overridden by environment variables
   serverUrl: process.env.SERVER_URL || 'http://localhost:3000',
+  serverUrl: process.env.SERVER_URL || 'http://localhost:3000',
 
   // API endpoints
   api: {
-    base: process.env.SERVER_URL || '',
+    base: process.env.SERVER_URL || 'https://website-news-backend.onrender.com',
     news: '/api/news',
     sources: '/api/sources',
     latestNews: '/api/news/latest',

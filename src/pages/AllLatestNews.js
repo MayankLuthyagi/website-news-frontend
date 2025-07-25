@@ -14,7 +14,14 @@ export default function AllLatestNews() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch(`${config.api.base}${config.api.latestNews}`);
+        const endpoint = `${config.api.base}${config.api.latestNews}`;
+        console.log('AllLatestNews - Config object:', config);
+        console.log('AllLatestNews - API base URL:', config.api.base);
+        console.log('AllLatestNews - Full endpoint URL:', endpoint);
+
+        const response = await fetch(endpoint);
+        console.log('AllLatestNews - Response status:', response.status);
+
         const data = await response.json();
         // Remove duplicates based on title
         const uniqueNews = data.filter((news, index, self) =>

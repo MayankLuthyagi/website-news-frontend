@@ -51,9 +51,14 @@ export default function CategoryNews() {
             try {
                 // Use the specific API endpoint format: api/news/category/{name}
                 const endpoint = `${config.api.base}/api/news/category/${categoryName}`;
-                console.log('Fetching from endpoint:', endpoint);
+                console.log('Config object:', config);
+                console.log('API base URL:', config.api.base);
+                console.log('Full endpoint URL:', endpoint);
+                console.log('Category name:', categoryName);
 
                 const response = await fetch(endpoint);
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
