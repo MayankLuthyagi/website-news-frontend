@@ -102,6 +102,8 @@ function Footer() {
               <p>&copy; {currentYear} Daily Brief Newsly. All rights reserved.</p>
             </div>
             <div className="footer-legal">
+              <Link to="/about">About</Link>
+              <Link to="/contact">Contact</Link>
               <Link to="/privacy">Privacy Policy</Link>
               <Link to="/terms">Terms of Service</Link>
               <Link to="/disclaimer">Disclaimer</Link>

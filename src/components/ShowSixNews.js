@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import NewsCard from './NewsCard';
+import NewsCard from './news_cards/NewsCard';
 import config from '../config/config';
 import '../index.css';
 export default function ShowThreeNews({ category }) {

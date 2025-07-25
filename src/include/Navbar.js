@@ -21,9 +21,9 @@ function Navbar() {
       </Link>
       <ul className="navbar-links">
         <li><Link to="/latest-news" className="nav-link">Latest</Link></li>
-        <li><Link to="/world" className="nav-link">World</Link></li>
-        <li><Link to="/national" className="nav-link">National</Link></li>
-        <li 
+        <li><Link to="/category/world" className="nav-link">World</Link></li>
+        <li><Link to="/category/india" className="nav-link">National</Link></li>
+        <li
           className={`dropdown ${isDropdownOpen ? 'dropdown-open' : ''}`}
           onMouseEnter={handleDropdownMouseEnter}
           onMouseLeave={handleDropdownMouseLeave}
@@ -35,20 +35,18 @@ function Navbar() {
             </svg>
           </a>
           <div className="dropdown-content">
-            <Link to="/national">Finance</Link>
-            <Link to="/world">Education</Link>
-            <Link to="/tech">Tech</Link>
-            <Link to="/business">Business</Link>
-            <Link to="/crime">Politics</Link>
-            <Link to="/sports">Sports</Link>
-            <Link to="/entertainment">Entertainment</Link>
-            <Link to="/entertainment">Health</Link>
+            <Link to="/category/finance">Finance</Link>
+            <Link to="/category/education">Education</Link>
+            <Link to="/category/tech">Tech</Link>
+            <Link to="/category/business">Business</Link>
+            <Link to="/category/politics">Politics</Link>
+            <Link to="/category/sports">Sports</Link>
+            <Link to="/category/entertainment">Entertainment</Link>
+            <Link to="/category/health">Health</Link>
           </div>
         </li>
-        <li><Link to="/about" className="nav-link nav-special">About</Link></li>
-        <li><Link to="/contact" className="nav-link nav-cta">Contact</Link></li>
       </ul>
-      
+
       {/* Mobile menu button - for future mobile implementation */}
       <div className="mobile-menu-btn">
         <span></span>

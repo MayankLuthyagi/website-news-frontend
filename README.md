@@ -16,16 +16,16 @@ cp .env.example .env
 
 Available environment variables:
 
-- `REACT_APP_SERVER_URL`: The base URL for the backend server (default: http://localhost:3000)
+- `SERVER_URL`: The base URL for the backend server (default: http://localhost:3000)
 
 ### Server Configuration
 
-The application connects to a backend server for news data. By default, it connects to `http://localhost:3000`, but this can be changed by setting the `REACT_APP_SERVER_URL` environment variable.
+The application connects to a backend server for news data. By default, it connects to `http://localhost:3000`, but this can be changed by setting the SERVER_URL` environment variable.
 
 For production deployment, create a `.env.production` file with the appropriate server URL:
 
 ```
-REACT_APP_SERVER_URL=https://your-production-server.com
+SERVER_URL=https://your-production-server.com
 ```
 
 ## Available Scripts

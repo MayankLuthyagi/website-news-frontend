@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import NewsCard from './NewsCard';
+import NewsCard from './news_cards/NewsCard';
 import config from '../config/config';
 import '../index.css';
 export default function ShowThreeTrendingNews({ category }) {
@@ -9,7 +9,7 @@ export default function ShowThreeTrendingNews({ category }) {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch(`${config.api.base}${config.api.news}/threeTrending`);
+        const response = await fetch(`${config.api.base}${config.api.news}/fourTrending`);
         const data = await response.json();
         setNewsList(data);
       } catch (error) {

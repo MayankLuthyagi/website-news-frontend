@@ -1,10 +1,11 @@
 import LatestNews from "../components/LatestNews";
 import Subscribe from "../components/Subscribe";
 import NewsDifferentType from "../components/NewsDifferentType";
-import React, { useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import '../index.css';
-import ShowThreeTrendingNews from "../components/ShowThreeTrendingNews";
+import ShowFourTrendingNews from "../components/ShowFourTrendingNews";
+import HeroTrendingNews from "../components/HeroTrendingNews";
 
 export default function Home() {
     return (
@@ -16,35 +17,27 @@ export default function Home() {
             </Helmet>
 
             <div className="home-container">
-                {/* Hero Section with Subscribe */}
-                <div className="home-hero-section">
-                    <Subscribe />
-                </div>
+                {/* Hero Section with Trending News Carousel */}
+                <HeroTrendingNews />
 
                 <main className="home-main-content">
                     {/* Latest News Section */}
                     <section className="home-section">
-                        <div className="section-card">
-                            <LatestNews title="Latest News" type="latestThree" />
-                        </div>
+                        <LatestNews title="Latest News" type="latestFour" />
                     </section>
 
                     {/* Trending News Section */}
                     <section className="home-section">
-                        <div className="section-card">
-                            <ShowThreeTrendingNews />
-                        </div>
+                        <ShowFourTrendingNews />
                     </section>
 
                     {/* Categories Section */}
                     <section className="home-section">
-                        <div className="section-card">
-                            <div className="section-header">
-                                <h2 className="section-title">Browse by Category</h2>
-                                <p className="section-subtitle">Discover news from different categories</p>
-                            </div>
-                            <NewsDifferentType />
+                        <div className="section-header">
+                            <h2 className="section-title">Browse by Category</h2>
+                            <p className="section-subtitle">Discover news from different categories</p>
                         </div>
+                        <NewsDifferentType />
                     </section>
                 </main>
             </div>

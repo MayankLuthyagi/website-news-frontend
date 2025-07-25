@@ -10,6 +10,9 @@ import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Disclaimer from './pages/Disclaimer';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import CategoryNews from './pages/CategoryNews';
 import ScrollToTop from './components/ScrollToTop';
 import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
@@ -24,20 +27,31 @@ function App() {
     <HelmetProvider>
       <Router>
         <ScrollToTop />
-        <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/latest-news" element={<AllLatestNews />} />
-          <Route path="/news-detail" element={<NewsDetail />} />
-          <Route path="/news-detail/:title" element={<NewsDetailWrapper />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/disclaimer" element={<Disclaimer />} />
-          {/* ...other routes */}
+          {/* Admin Routes (without navbar/footer) */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+          {/* Regular Routes (with navbar/footer) */}
+          <Route path="/*" element={
+            <>
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/latest-news" element={<AllLatestNews />} />
+                <Route path="/news-detail" element={<NewsDetail />} />
+                <Route path="/news-detail/:title" element={<NewsDetailWrapper />} />
+                <Route path="/category/:categoryName" element={<CategoryNews />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/disclaimer" element={<Disclaimer />} />
+              </Routes>
+              <Footer />
+            </>
+          } />
         </Routes>
-        <Footer />
       </Router>
     </HelmetProvider>
   );

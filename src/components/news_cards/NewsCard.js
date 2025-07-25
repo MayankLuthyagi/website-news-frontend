@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import config from '../config/config';
-import '../index.css';
+import config from '../../config/config';
+import '../../index.css';
 
 function formatRelativeDate(dateString) {
   const dateObj = new Date(dateString);
@@ -162,10 +162,6 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
     }
   };
 
-  // Get first category and trim whitespace
-  const firstCategory = category ? category.split(',')[0].trim() : '';
-  // Generate a class for the category color
-  const categoryClass = firstCategory ? `news-card-category news-card-category-${firstCategory.toLowerCase()}` : 'news-card-category';
   return (
     <a
       className="news-card"
@@ -175,12 +171,6 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
       role="button"
       tabIndex={0}
     >
-      <div className="news-card-header">
-        <div className="news-category">
-          <span className={categoryClass}>{firstCategory}</span>
-        </div>
-        <span className="news-card-date">{sourceName} . {formatRelativeDate(date)}</span>
-      </div>
       <div className="news-card-image">
         {imageUrl && (
           <img
@@ -194,6 +184,9 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
             <span>{sourceName}</span>
           </div>
         )}
+      </div>
+      <div className="news-card-header">
+        <span className="news-card-date">{sourceName} . {formatRelativeDate(date)}</span>
       </div>
       <div className="news-card-content">
         <h3 className="news-card-title">{title}</h3>
