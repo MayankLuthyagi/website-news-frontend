@@ -9,11 +9,18 @@ export default function ShowThreeTrendingNews({ category }) {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch(`${config.api.base}${config.api.news}/fourTrending`);
+        const endpoint = `${config.api.base}/api/news/fourTrending`;
+        console.log('ShowFourTrendingNews - API base URL:', config.api.base);
+        console.log('ShowFourTrendingNews - Full endpoint URL:', endpoint);
+
+        const response = await fetch(endpoint);
+        console.log('ShowFourTrendingNews - Response status:', response.status);
+
         const data = await response.json();
+        console.log('ShowFourTrendingNews - Received data:', data);
         setNewsList(data);
       } catch (error) {
-        console.error('Error fetching news:', error);
+        console.error('Error fetching trending news:', error);
       } finally {
         setLoading(false);
       }

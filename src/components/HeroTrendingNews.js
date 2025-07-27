@@ -8,15 +8,22 @@ export default function HeroTrendingNews() {
     const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
 
     useEffect(() => {
-        fetch(`${config.serverUrl}/api/news/fourTrending`)
-            .then(response => response.json())
+        const endpoint = `${config.api.base}/api/news/fourTrending`;
+        console.log('HeroTrendingNews - API base URL:', config.api.base);
+        console.log('HeroTrendingNews - Full endpoint URL:', endpoint);
+
+        fetch(endpoint)
+            .then(response => {
+                console.log('HeroTrendingNews - Response status:', response.status);
+                return response.json();
+            })
             .then(data => {
-                console.log(data);
+                console.log('HeroTrendingNews - Received data:', data);
                 setTrendingNews(data);
                 setLoading(false);
             })
             .catch(error => {
-                console.error('Error fetching hero news:', error);
+                console.error('Error fetching hero trending news:', error);
                 setLoading(false);
             });
     }, []);

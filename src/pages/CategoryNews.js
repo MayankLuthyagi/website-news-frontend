@@ -66,9 +66,17 @@ export default function CategoryNews() {
 
                 const data = await response.json();
                 console.log('Received data:', data);
+                console.log('Data type:', typeof data);
+                console.log('Is data array?', Array.isArray(data));
+                console.log('data.news:', data.news);
+                console.log('data.articles:', data.articles);
+                console.log('data.data:', data.data);
 
+                // Backend returns data in format: { category, total, news: [...] }
                 // Ensure data is an array
-                const newsArray = Array.isArray(data) ? data : (data.articles || data.data || []);
+                const newsArray = Array.isArray(data) ? data : (data.news || data.articles || data.data || []);
+                console.log('News array:', newsArray);
+                console.log('News array length:', newsArray.length);
 
                 // Remove duplicates based on title and filter out invalid entries
                 const validNews = newsArray.filter(news =>
@@ -79,12 +87,16 @@ export default function CategoryNews() {
                     news.title !== undefined &&
                     news.title.trim() !== ''
                 );
+                console.log('Valid news after filtering:', validNews);
+                console.log('Valid news length:', validNews.length);
 
                 const uniqueNews = validNews.filter((news, index, self) =>
                     index === self.findIndex(n =>
                         (n.title || n.headline) === (news.title || news.headline)
                     )
                 );
+                console.log('Unique news after deduplication:', uniqueNews);
+                console.log('Final unique news length:', uniqueNews.length);
 
                 setNewsList(uniqueNews);
             } catch (error) {
