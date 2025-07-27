@@ -862,10 +862,11 @@ body {
   }
 
   .navbar-links {
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
-    align-items: flex-start;
+    display: none;
+  }
+  
+  .navbar-links.show {
+    display: flex;
   }
 
   .navbar-logo {

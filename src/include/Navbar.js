@@ -4,6 +4,7 @@ import '../index.css';
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleDropdownMouseEnter = () => {
     setIsDropdownOpen(true);
@@ -13,13 +14,30 @@ function Navbar() {
     setIsDropdownOpen(false);
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Prevent default behavior for dropdown button
+  const handleDropdownClick = (e) => {
+    e.preventDefault();
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo">
         <span className="logo-text">Daily Brief</span>
         <span className="logo-accent">Newsly</span>
       </Link>
-      <ul className="navbar-links">
+      
+      <div className="mobile-menu-btn" onClick={toggleMobileMenu}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <ul className={`navbar-links ${isMobileMenuOpen ? 'show' : ''}`}>
         <li><Link to="/latest-news" className="nav-link">Latest</Link></li>
         <li><Link to="/category/world" className="nav-link">World</Link></li>
         <li><Link to="/category/india" className="nav-link">National</Link></li>
@@ -28,12 +46,13 @@ function Navbar() {
           onMouseEnter={handleDropdownMouseEnter}
           onMouseLeave={handleDropdownMouseLeave}
         >
-          <a href="#categories" className="dropbtn nav-link">
+          {/* Changed from <a> to <button> */}
+          <button className="dropbtn nav-link" onClick={handleDropdownClick}>
             Categories
             <svg className="dropdown-arrow" width="12" height="12" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M5 8L10 13L15 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </a>
+          </button>
           <div className="dropdown-content">
             <Link to="/category/finance">Finance</Link>
             <Link to="/category/education">Education</Link>
@@ -46,15 +65,8 @@ function Navbar() {
           </div>
         </li>
       </ul>
-
-      {/* Mobile menu button - for future mobile implementation */}
-      <div className="mobile-menu-btn">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
     </nav>
   );
 }
 
-export default Navbar; 
+export default Navbar;
