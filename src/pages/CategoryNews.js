@@ -25,7 +25,26 @@ export default function CategoryNews() {
         politics: 'Politics',
         sports: 'Sports',
         entertainment: 'Entertainment',
-        health: 'Health'
+        health: 'Health',
+        // Tech subcategories
+        'AI': 'AI',
+        'Cybersecurity': 'Cybersecurity',
+        'Quantum Computing': 'Quantum Computing',
+        'AR/VR': 'AR/VR',
+        'Edge Computing': 'Edge Computing',
+        '6G & IoT': '6G & IoT',
+        'Sustainable Tech': 'Sustainable Tech',
+        'Gadgets': 'Gadgets',
+        'Internet': 'Internet',
+        'Gaming': 'Gaming',
+        'Cloud': 'Cloud',
+        'Semiconductors': 'Semiconductors',
+        'Web3': 'Web3',
+        'Green Tech': 'Green Tech',
+        'EdTech': 'EdTech',
+        'HealthTech': 'HealthTech',
+        'Autotech': 'Autotech',
+        'Space Tech': 'Space Tech'
     };
 
     // Category API endpoint mapping
@@ -49,36 +68,50 @@ export default function CategoryNews() {
         const fetchCategoryNews = async () => {
             setLoading(true);
             try {
-                // Use the specific API endpoint format: api/news/category/{name}
-                const endpoint = `${config.api.base}/api/news/category/${categoryName}`;
-                console.log('Config object:', config);
-                console.log('API base URL:', config.api.base);
-                console.log('Full endpoint URL:', endpoint);
-                console.log('Category name:', categoryName);
+                let endpoint;
+                let isSubcategory = false;
+
+                // Check if it's a tech subcategory
+                const techSubcategories = ['AI', 'Cybersecurity', 'Quantum Computing', 'AR/VR', 'Edge Computing', '6G & IoT', 'Sustainable Tech', 'Gadgets', 'Internet', 'Gaming', 'Cloud', 'Semiconductors', 'Web3', 'Green Tech', 'EdTech', 'HealthTech', 'Autotech', 'Space Tech'];
+
+                if (techSubcategories.includes(categoryName)) {
+                    // Use subcategory endpoint for tech subcategories
+                    endpoint = `${config.api.base}/api/news/subcategory/${encodeURIComponent(categoryName)}`;
+                    isSubcategory = true;
+                } else if (categoryName.toLowerCase() === 'tech') {
+                    // Use Tech category endpoint
+                    endpoint = `${config.api.base}/api/news/category/Tech`;
+                } else {
+                    // Use regular category endpoint for other categories
+                    endpoint = `${config.api.base}/api/news/category/${categoryName}`;
+                }
+
+                console.log('CategoryNews - Endpoint:', endpoint);
+                console.log('CategoryNews - Is subcategory:', isSubcategory);
 
                 const response = await fetch(endpoint);
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
+                console.log('CategoryNews - Response status:', response.status);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
-                console.log('Received data:', data);
-                console.log('Data type:', typeof data);
-                console.log('Is data array?', Array.isArray(data));
-                console.log('data.news:', data.news);
-                console.log('data.articles:', data.articles);
-                console.log('data.data:', data.data);
+                console.log('CategoryNews - Received data:', data);
 
-                // Backend returns data in format: { category, total, news: [...] }
-                // Ensure data is an array
-                const newsArray = Array.isArray(data) ? data : (data.news || data.articles || data.data || []);
-                console.log('News array:', newsArray);
-                console.log('News array length:', newsArray.length);
+                // Extract news array based on response structure
+                let newsArray = [];
+                if (isSubcategory) {
+                    // Subcategory response: { subcategory, total, news: [...] }
+                    newsArray = data.news || [];
+                } else {
+                    // Category response: { category, total, news: [...] }
+                    newsArray = data.news || [];
+                }
 
-                // Remove duplicates based on title and filter out invalid entries
+                console.log('CategoryNews - News array:', newsArray);
+
+                // Filter out invalid entries and remove duplicates
                 const validNews = newsArray.filter(news =>
                     news &&
                     typeof news === 'object' &&
@@ -87,37 +120,42 @@ export default function CategoryNews() {
                     news.title !== undefined &&
                     news.title.trim() !== ''
                 );
-                console.log('Valid news after filtering:', validNews);
-                console.log('Valid news length:', validNews.length);
 
                 const uniqueNews = validNews.filter((news, index, self) =>
                     index === self.findIndex(n =>
                         (n.title || n.headline) === (news.title || news.headline)
                     )
                 );
-                console.log('Unique news after deduplication:', uniqueNews);
-                console.log('Final unique news length:', uniqueNews.length);
 
+                console.log('CategoryNews - Final unique news:', uniqueNews);
                 setNewsList(uniqueNews);
+
             } catch (error) {
                 console.error(`Error fetching ${categoryName} news:`, error);
-                // Fallback to latest news if category-specific endpoint fails
+                // Fallback to Tech category if it's a tech-related request
                 try {
-                    const fallbackResponse = await fetch(`${config.api.base}${config.api.latestNews}`);
-                    const fallbackData = await fallbackResponse.json();
+                    const fallbackEndpoint = `${config.api.base}/api/news/category/Tech`;
+                    console.log('CategoryNews - Fallback endpoint:', fallbackEndpoint);
 
-                    const fallbackArray = Array.isArray(fallbackData) ? fallbackData : (fallbackData.articles || fallbackData.data || []);
+                    const fallbackResponse = await fetch(fallbackEndpoint);
+                    if (fallbackResponse.ok) {
+                        const fallbackData = await fallbackResponse.json();
+                        const newsArray = fallbackData.news || [];
 
-                    const filteredNews = fallbackArray.filter(news =>
-                        news &&
-                        typeof news === 'object' &&
-                        (news.title || news.headline) &&
-                        (news.category?.toLowerCase().includes(categoryName.toLowerCase()) ||
-                            (news.title || news.headline)?.toLowerCase().includes(categoryName.toLowerCase()) ||
-                            (news.summary || news.description || news.content)?.toLowerCase().includes(categoryName.toLowerCase()))
-                    );
+                        // Filter by subcategory if applicable
+                        let filteredNews = newsArray;
+                        if (categoryDisplayNames[categoryName] && categoryName !== 'tech') {
+                            filteredNews = newsArray.filter(news =>
+                                news.subcategory?.toLowerCase().includes(categoryName.toLowerCase()) ||
+                                news.title?.toLowerCase().includes(categoryName.toLowerCase()) ||
+                                news.summary?.toLowerCase().includes(categoryName.toLowerCase())
+                            );
+                        }
 
-                    setNewsList(filteredNews.length > 0 ? filteredNews : fallbackArray.slice(0, 20));
+                        setNewsList(filteredNews.length > 0 ? filteredNews : newsArray.slice(0, 20));
+                    } else {
+                        setNewsList([]);
+                    }
                 } catch (fallbackError) {
                     console.error('Error fetching fallback news:', fallbackError);
                     setNewsList([]);

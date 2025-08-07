@@ -8,24 +8,56 @@ export default function HeroTrendingNews() {
     const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
 
     useEffect(() => {
-        const endpoint = `${config.api.base}/api/news/fourTrending`;
-        console.log('HeroTrendingNews - API base URL:', config.api.base);
-        console.log('HeroTrendingNews - Full endpoint URL:', endpoint);
+        const fetchTrendingNews = async () => {
+            try {
+                // Try Tech trending news first
+                const endpoint = `${config.api.base}/api/news/fourTrending?category=Tech&limit=4`;
+                console.log('HeroTrendingNews - Tech endpoint:', endpoint);
 
-        fetch(endpoint)
-            .then(response => {
+                const response = await fetch(endpoint);
                 console.log('HeroTrendingNews - Response status:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('HeroTrendingNews - Received data:', data);
-                setTrendingNews(data);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('HeroTrendingNews - Tech data:', data);
+
+                // Check if we have actual data
+                if (Array.isArray(data) && data.length > 0) {
+                    setTrendingNews(data);
+                } else {
+                    // Try category endpoint as secondary option
+                    const categoryEndpoint = `${config.api.base}/api/news/category/Tech?limit=4`;
+                    console.log('HeroTrendingNews - Category endpoint:', categoryEndpoint);
+
+                    const categoryResponse = await fetch(categoryEndpoint);
+                    if (categoryResponse.ok) {
+                        const categoryData = await categoryResponse.json();
+                        console.log('HeroTrendingNews - Category data:', categoryData);
+
+                        // Check if we have actual tech news
+                        if (categoryData.news && categoryData.news.length > 0) {
+                            setTrendingNews(categoryData.news.slice(0, 4));
+                        } else {
+                            console.log('No tech trending news found in database');
+                            setTrendingNews([]);
+                        }
+                    } else {
+                        setTrendingNews([]);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching tech trending news:', error);
+                // Don't fallback to other categories - just show empty
+                setTrendingNews([]);
+            } finally {
                 setLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching hero trending news:', error);
-                setLoading(false);
-            });
+            }
+        };
+
+        fetchTrendingNews();
     }, []);
 
     // Auto-slide effect
@@ -44,11 +76,12 @@ export default function HeroTrendingNews() {
     return (
         <div className="home-hero-section">
             {loading ? (
-                <div className="loading">Loading trending news...</div>
+                <div className="loading">Loading trending tech news...</div>
             ) : trendingNews.length > 0 ? (
                 <div className="hero-carousel">
                     <LargeCard
                         key={trendingNews[currentNewsIndex].id || currentNewsIndex}
+                        id={trendingNews[currentNewsIndex].id}
                         title={trendingNews[currentNewsIndex].title}
                         image={trendingNews[currentNewsIndex].image}
                         date={trendingNews[currentNewsIndex].date}
@@ -56,7 +89,7 @@ export default function HeroTrendingNews() {
                         summary={trendingNews[currentNewsIndex].summary}
                         source_id={trendingNews[currentNewsIndex].source_id}
                         source_name={trendingNews[currentNewsIndex].source_name}
-                        url={trendingNews[currentNewsIndex].url}
+                        url={trendingNews[currentNewsIndex].link}
                     />
 
                     {/* Navigation dots */}
@@ -72,7 +105,13 @@ export default function HeroTrendingNews() {
                     </div>
                 </div>
             ) : (
-                <div className="no-news">No trending news available</div>
+                <div className="no-tech-news-hero">
+                    <div className="no-news-content">
+                        <h2>No Tech News Available</h2>
+                        <p>We're currently updating our technology news database.</p>
+                        <p>Please check back soon for the latest tech updates and innovations.</p>
+                    </div>
+                </div>
             )}
         </div>
     );

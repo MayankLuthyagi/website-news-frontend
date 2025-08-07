@@ -14,22 +14,52 @@ export default function AllLatestNews() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const endpoint = `${config.api.base}${config.api.latestNews}`;
-        console.log('AllLatestNews - Config object:', config);
-        console.log('AllLatestNews - API base URL:', config.api.base);
-        console.log('AllLatestNews - Full endpoint URL:', endpoint);
+        // Fetch Tech latest news using correct API structure
+        const endpoint = `${config.api.base}/api/news/latest?category=Tech`;
+        console.log('AllLatestNews - Tech endpoint:', endpoint);
 
         const response = await fetch(endpoint);
         console.log('AllLatestNews - Response status:', response.status);
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
-        // Remove duplicates based on title
-        const uniqueNews = data.filter((news, index, self) =>
-          index === self.findIndex(n => n.title === news.title)
-        );
-        setNewsList(uniqueNews);
+        console.log('AllLatestNews - Tech data:', data);
+
+        // Check if we have actual tech news data
+        if (Array.isArray(data) && data.length > 0) {
+          // Remove duplicates based on title
+          const uniqueNews = data.filter((news, index, self) =>
+            index === self.findIndex(n => n.title === news.title)
+          );
+          setNewsList(uniqueNews);
+        } else {
+          // Try category endpoint as secondary option
+          const categoryResponse = await fetch(`${config.api.base}/api/news/category/Tech`);
+          if (categoryResponse.ok) {
+            const categoryData = await categoryResponse.json();
+            console.log('AllLatestNews - Category data:', categoryData);
+
+            // Check if we have actual tech news
+            if (categoryData.news && categoryData.news.length > 0) {
+              const uniqueNews = categoryData.news.filter((news, index, self) =>
+                index === self.findIndex(n => n.title === news.title)
+              );
+              setNewsList(uniqueNews);
+            } else {
+              console.log('No tech news found in database');
+              setNewsList([]);
+            }
+          } else {
+            setNewsList([]);
+          }
+        }
       } catch (error) {
-        console.error('Error fetching news:', error);
+        console.error('Error fetching tech news:', error);
+        // Don't fallback to other categories - just show empty
+        setNewsList([]);
       } finally {
         setLoading(false);
       }
@@ -41,33 +71,33 @@ export default function AllLatestNews() {
   return (
     <>
       <Helmet>
-        <title>All Latest News - Your News Portal</title>
-        <meta name="description" content="Stay updated with all the latest news from around the world. Get breaking news, trending stories, and in-depth coverage on politics, technology, sports, and more." />
-        <meta name="keywords" content="latest news, breaking news, world news, politics, technology, sports, entertainment, business news" />
+        <title>All Latest Tech News - Tech Brief Daily</title>
+        <meta name="description" content="Stay updated with all the latest technology news. Get breaking tech news, trending stories, and in-depth coverage on AI, startups, gadgets, and innovation." />
+        <meta name="keywords" content="latest tech news, breaking tech news, technology, AI, startups, gadgets, software, innovation, programming" />
 
         {/* Open Graph Tags */}
-        <meta property="og:title" content="All Latest News - Your News Portal" />
-        <meta property="og:description" content="Stay updated with all the latest news from around the world. Get breaking news, trending stories, and in-depth coverage." />
-        <meta property="og:image" content={`${config.SERVER_URL}/images/news-og-image.jpg`} />
-        <meta property="og:url" content={`${config.SERVER_URL}/latest-news`} />
+        <meta property="og:title" content="All Latest Tech News - Tech Brief Daily" />
+        <meta property="og:description" content="Stay updated with all the latest technology news. Get breaking tech news, trending stories, and in-depth coverage." />
+        <meta property="og:image" content={`${config.api.base}/images/tech-og-image.jpg`} />
+        <meta property="og:url" content={`${config.api.base}/latest-news`} />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Your News Portal" />
+        <meta property="og:site_name" content="Tech Brief Daily" />
 
         {/* Twitter Cards */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="All Latest News - Your News Portal" />
-        <meta name="twitter:description" content="Stay updated with all the latest news from around the world." />
-        <meta name="twitter:image" content={`${config.SERVER_URL}/images/news-og-image.jpg`} />
+        <meta name="twitter:title" content="All Latest Tech News - Tech Brief Daily" />
+        <meta name="twitter:description" content="Stay updated with all the latest technology news from around the world." />
+        <meta name="twitter:image" content={`${config.api.base}/images/tech-og-image.jpg`} />
 
         {/* Additional SEO */}
         <meta name="robots" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="canonical" href={`${config.SERVER_URL}/latest-news`} />
+        <link rel="canonical" href={`${config.api.base}/latest-news`} />
       </Helmet>
       <div className="all-news-container">
         <div className="all-news-header">
-          <h1>All Latest News</h1>
-          <p>Stay updated with comprehensive news coverage from multiple sources</p>
+          <h1>All Latest Tech News</h1>
+          <p>Stay updated with comprehensive technology news coverage from multiple sources</p>
         </div>
 
         {loading ? (
@@ -78,7 +108,7 @@ export default function AllLatestNews() {
           <>
             {/* Featured News Section */}
             <section className="featured-news-section">
-              <h2 className="section-title">Featured Stories</h2>
+              <h2 className="section-title">Featured Tech Stories</h2>
               <div className="featured-news-grid">
                 {newsList.slice(0, 3).map((news, idx) => (
                   <FeaturedCard
@@ -99,7 +129,7 @@ export default function AllLatestNews() {
 
             {/* Breaking News Section */}
             <section className="breaking-news-section">
-              <h2 className="section-title">Breaking News</h2>
+              <h2 className="section-title">Breaking Tech News</h2>
               <div className="breaking-news-grid">
                 {newsList.slice(3, 9).map((news, idx) => (
                   <CompactCard
@@ -120,7 +150,7 @@ export default function AllLatestNews() {
 
             {/* Full Image Stories Section */}
             <section className="full-image-section">
-              <h2 className="section-title">In Focus</h2>
+              <h2 className="section-title">Tech In Focus</h2>
               <div className="full-image-grid">
                 {newsList.slice(9, 12).map((news, idx) => (
                   <FullImageCard
@@ -183,7 +213,11 @@ export default function AllLatestNews() {
           </>
         ) : (
           <div className="no-news-section">
-            <p>No news available at the moment.</p>
+            <div className="no-news-message">
+              <h3>No Tech News Available</h3>
+              <p>We're currently updating our technology news database.</p>
+              <p>Please check back soon for the latest tech updates and innovations.</p>
+            </div>
           </div>
         )}
       </div>

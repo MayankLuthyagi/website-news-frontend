@@ -11,16 +11,32 @@ function formatRelativeDate(dateString) {
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);
   const diffDay = Math.floor(diffHour / 24);
+  
   if (diffSec < 60) return 'just now';
-  if (diffMin < 60) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
-  if (diffHour < 24) return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;
-  if (diffDay < 7) return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
-  return dateObj.toLocaleDateString();
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHour < 24) return `${diffHour}h ago`;
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return dateObj.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric',
+    year: dateObj.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+  });
 }
 
-function NewsCard({ id, title, summary, url, date, source_id, source_name, category, image }) {
+function NewsCard({ 
+  id, 
+  title, 
+  summary, 
+  url, 
+  date, 
+  source_id, 
+  source_name, 
+  category, 
+  image,
+  variant = 'default' // 'default', 'featured', 'compact'
+}) {
   const navigate = useNavigate();
-  const [sourceName, setSourceName] = useState(source_name || 'Unknown Source');
+  const [sourceName, setSourceName] = useState(source_name || 'TechPulse');
   const [imageUrl, setImageUrl] = useState(image || null);
   const [imageError, setImageError] = useState(false);
 
@@ -46,7 +62,7 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
           source_id,
           source_name: sourceName,
           category,
-          image
+          image: imageUrl
         }
       }
     });
@@ -59,7 +75,7 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
     }
   };
 
-  // If source_name is not provided, fetch it using source_id
+  // Fetch source name if not provided
   useEffect(() => {
     async function fetchSourceName() {
       if (!source_name && source_id) {
@@ -69,11 +85,11 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
             const data = await response.json();
             setSourceName(data.source_name);
           } else {
-            setSourceName('Unknown Source');
+            setSourceName('TechPulse');
           }
         } catch (error) {
           console.error('Error fetching source name:', error);
-          setSourceName('Unknown Source');
+          setSourceName('TechPulse');
         }
       }
     }
@@ -86,114 +102,119 @@ function NewsCard({ id, title, summary, url, date, source_id, source_name, categ
     setImageError(false);
   }, [imageUrl]);
 
-  // Handle image fallback when no initial image - use category-based images
+  // Handle image fallback with tech-focused defaults
   useEffect(() => {
     if (!image && category) {
-      // Try category-based image with proper capitalization
-      const firstCategory = category.split(',')[0].trim();
-      console.log('Original category:', firstCategory);
-
+      const firstCategory = category.split(',')[0].trim().toLowerCase();
+      
       // Map category to proper image filename
       const categoryMapping = {
-        'business': 'Business',
         'tech': 'Tech',
         'technology': 'Tech',
-        'world': 'World',
-        'entertainment': 'Entertainment',
-        'politics': 'Politics',
-        'sports': 'Sports',
-        'health': 'Health',
-        'education': 'Education',
+        'ai': 'Tech',
+        'artificial intelligence': 'Tech',
+        'cybersecurity': 'Tech',
+        'quantum computing': 'Tech',
+        'ar/vr': 'Tech',
+        'edge computing': 'Tech',
+        '6g & iot': 'Tech',
+        'sustainable tech': 'Tech',
+        'web3': 'Tech',
+        'blockchain': 'Tech',
+        'cloud': 'Tech',
+        'semiconductors': 'Tech',
+        'gaming': 'Tech',
+        'gadgets': 'Tech',
+        'space tech': 'Tech',
+        'autotech': 'Tech',
+        'healthtech': 'Health',
+        'edtech': 'Education',
+        'fintech': 'Finance',
+        'business': 'Business',
         'finance': 'Finance',
-        'national': 'India',
-        'india': 'India'
+        'sports': 'Sports',
+        'entertainment': 'Entertainment',
+        'health': 'Health',
+        'politics': 'Politics',
+        'world': 'World',
+        'india': 'India',
+        'education': 'Education'
       };
 
-      // Try exact match first, then lowercase match
-      let imageCategory = firstCategory;
-      if (categoryMapping[firstCategory.toLowerCase()]) {
-        imageCategory = categoryMapping[firstCategory.toLowerCase()];
-      }
-
-      console.log('Image category for file:', imageCategory);
-      setImageUrl(`/images/${imageCategory}.png`);
+      const mappedCategory = categoryMapping[firstCategory] || 'Tech';
+      const fallbackImageUrl = `/images/${mappedCategory}.png`;
+      setImageUrl(fallbackImageUrl);
     }
   }, [image, category]);
 
   const handleImageError = () => {
-    if (!imageError) {
-      setImageError(true);
-      // If image fails to load, try category-based image as fallback
-      if (category) {
-        const firstCategory = category.split(',')[0].trim();
-        console.log('Error fallback - Original category:', firstCategory);
-
-        // Map category to proper image filename
-        const categoryMapping = {
-          'business': 'Business',
-          'tech': 'Tech',
-          'technology': 'Tech',
-          'world': 'World',
-          'entertainment': 'Entertainment',
-          'politics': 'Politics',
-          'sports': 'Sports',
-          'health': 'Health',
-          'education': 'Education',
-          'finance': 'Finance',
-          'national': 'India',
-          'india': 'India'
-        };
-
-        // Try exact match first, then lowercase match
-        let imageCategory = firstCategory;
-        if (categoryMapping[firstCategory.toLowerCase()]) {
-          imageCategory = categoryMapping[firstCategory.toLowerCase()];
-        }
-
-        console.log('Error fallback - Image category:', imageCategory);
-        setImageUrl(`/images/${imageCategory}.png`);
-      } else {
-        // No category available, hide image
-        setImageUrl(null);
-      }
-    } else {
-      // Even category-based fallback failed, hide image
-      setImageUrl(null);
-    }
+    setImageError(true);
+    // Ultimate fallback to Tech image
+    setImageUrl('/images/Tech.png');
   };
 
+  // Get category class for styling
+  const getCategoryClass = () => {
+    if (!category) return '';
+    const categorySlug = category.toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+    return `news-card-category-${categorySlug}`;
+  };
+
+  const cardClassName = `news-card ${variant === 'featured' ? 'featured' : ''} ${variant === 'compact' ? 'compact' : ''}`.trim();
+
   return (
-    <a
-      className="news-card"
-      href="#"
+    <article 
+      className={cardClassName}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
-      role="button"
       tabIndex={0}
+      role="button"
+      aria-label={`Read article: ${title}`}
     >
-      <div className="news-card-image">
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={sourceName}
-            onError={handleImageError}
-          />
-        )}
-        {!imageUrl && (
-          <div className="news-card-no-image">
-            <span>{sourceName}</span>
-          </div>
-        )}
-      </div>
-      <div className="news-card-header">
-        <span className="news-card-date">{sourceName} . {formatRelativeDate(date)}</span>
-      </div>
+      {imageUrl && !imageError && (
+        <img 
+          src={imageUrl}
+          alt={title}
+          className="news-card-image"
+          onError={handleImageError}
+          loading="lazy"
+        />
+      )}
+      
       <div className="news-card-content">
-        <h3 className="news-card-title">{title}</h3>
-        <p className="news-card-summary">{summary.length > 250 ? summary.slice(0, 250) + '...' : summary}</p>
+        <div className="news-card-header">
+          {category && (
+            <span className={`category-badge ${getCategoryClass()}`}>
+              {category}
+            </span>
+          )}
+        </div>
+        
+        <h3 className="news-card-title">
+          {title}
+        </h3>
+        
+        {summary && (
+          <p className="news-card-summary">
+            {summary}
+          </p>
+        )}
+        
+        <div className="news-card-footer">
+          <div className="news-card-meta">
+            <span className="news-card-source">{sourceName}</span>
+            {date && (
+              <span className="news-card-date">{formatRelativeDate(date)}</span>
+            )}
+          </div>
+        </div>
       </div>
-    </a>
+    </article>
   );
 }
 
-export default NewsCard; 
+export default NewsCard;
+      

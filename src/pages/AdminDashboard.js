@@ -8,7 +8,15 @@ import '../index.css';
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('news');
     const [adminUser, setAdminUser] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [allowFilter, setAllowFilter] = useState(true);
+    const [showDisallowedOnly, setShowDisallowedOnly] = useState(false);
     const navigate = useNavigate();
+
+    const categories = [
+        'World', 'India', 'Tech', 'Politics', 'Sports',
+        'Entertainment', 'Health', 'Business', 'Finance', 'Education'
+    ];
 
     useEffect(() => {
         // Check if admin is logged in
@@ -113,7 +121,12 @@ export default function AdminDashboard() {
                 {/* Admin Content */}
                 <main className="admin-main">
                     <div className="admin-content">
-                        {activeTab === 'news' && <NewsManagement />}
+                        {activeTab === 'news' && (
+                            <NewsManagement
+                                selectedCategory={selectedCategory}
+                                allowFilter={allowFilter}
+                            />
+                        )}
                         {activeTab === 'sources' && <SourceManagement />}
                     </div>
                 </main>

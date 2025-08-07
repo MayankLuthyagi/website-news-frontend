@@ -63,23 +63,25 @@ function FeaturedCard({ id, title, summary, url, date, source_id, source_name, c
         if (!image && category) {
             const firstCategory = category.split(',')[0].trim();
 
-            // Map category to proper image filename
+            // Map category to proper image filename (Tech-focused only)
             const categoryMapping = {
-                'business': 'Business',
                 'tech': 'Tech',
                 'technology': 'Tech',
-                'world': 'World',
-                'entertainment': 'Entertainment',
-                'politics': 'Politics',
-                'sports': 'Sports',
-                'health': 'Health',
-                'education': 'Education',
-                'finance': 'Finance',
-                'national': 'India',
-                'india': 'India'
+                'artificial intelligence': 'Tech',
+                'ai': 'Tech',
+                'machine learning': 'Tech',
+                'software': 'Tech',
+                'hardware': 'Tech',
+                'programming': 'Tech',
+                'cybersecurity': 'Tech',
+                'internet': 'Tech',
+                'mobile': 'Tech',
+                'gaming': 'Tech',
+                'startups': 'Tech',
+                'innovation': 'Tech'
             };
 
-            let imageCategory = firstCategory;
+            let imageCategory = 'Tech'; // Default to Tech for our tech-focused website
             if (categoryMapping[firstCategory.toLowerCase()]) {
                 imageCategory = categoryMapping[firstCategory.toLowerCase()];
             }

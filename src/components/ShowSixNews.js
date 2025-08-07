@@ -12,18 +12,52 @@ export default function ShowThreeNews({ category }) {
       setLoading(true);
       setError(null);
       try {
-        console.log(`Fetching news for category: ${category}`);
-        const response = await fetch(`${config.api.base}${config.api.news}/six?category=${category}`);
+        console.log(`Fetching news for tech subcategory: ${category}`);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        // First try subcategory-specific tech news
+        let endpoint = `${config.api.base}/api/news/subcategory/${encodeURIComponent(category)}?limit=6`;
+        console.log('ShowSixNews - Subcategory endpoint:', endpoint);
+
+        let response = await fetch(endpoint);
+        console.log('ShowSixNews - Subcategory response status:', response.status);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`ShowSixNews - ${category} subcategory data:`, data);
+
+          // Extract news array from subcategory response
+          const newsArray = data.news || [];
+          if (newsArray.length > 0) {
+            setNewsList(newsArray.slice(0, 6));
+            setLoading(false);
+            return;
+          }
         }
 
-        const data = await response.json();
-        setNewsList(data);
+        // Fallback to Tech category with subcategory filter
+        endpoint = `${config.api.base}/api/news/category/Tech?subcategory=${encodeURIComponent(category)}&limit=6`;
+        console.log('ShowSixNews - Category fallback endpoint:', endpoint);
+
+        response = await fetch(endpoint);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('ShowSixNews - Category fallback data:', data);
+
+          const newsArray = data.news || [];
+          if (newsArray.length > 0) {
+            setNewsList(newsArray.slice(0, 6));
+          } else {
+            console.log(`No tech news found for subcategory: ${category}`);
+            setNewsList([]);
+          }
+        } else {
+          console.log('Category fallback also failed');
+          setNewsList([]);
+        }
+
       } catch (error) {
-        console.error(`No news available for ${category} category.`);
-        setError(`No news available for ${category} category.`);
+        console.error(`Error fetching ${category} tech news:`, error);
+        setNewsList([]);
       } finally {
         setLoading(false);
       }
@@ -58,7 +92,10 @@ export default function ShowThreeNews({ category }) {
           />
         ))
       ) : (
-        <p>No news available for {category} category.</p>
+        <div className="no-news-message">
+          <p>No {category} tech news available at the moment.</p>
+          <p>Check back soon for updates in this technology category.</p>
+        </div>
       )}
     </div>
 

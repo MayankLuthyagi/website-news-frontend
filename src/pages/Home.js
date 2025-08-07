@@ -11,31 +11,31 @@ export default function Home() {
     return (
         <>
             <Helmet>
-                <title>Daily Brief Newsly - Your Daily Dose of Curated News</title>
-                <meta name="description" content="Stay informed with curated news from trusted global sources. Get the latest world, national, tech, and sports news with AI-enhanced summaries." />
-                <meta name="keywords" content="daily news, breaking news, world news, national news, tech news, sports news, curated news" />
+                <title>Tech Brief Daily - Your Daily Dose of Technology News</title>
+                <meta name="description" content="Stay informed with the latest technology news, AI developments, startup updates, and tech innovations. Your trusted source for curated tech content." />
+                <meta name="keywords" content="tech news, technology, AI news, startup news, software development, tech innovations, programming, gadgets" />
             </Helmet>
 
             <div className="home-container">
-                {/* Hero Section with Trending News Carousel */}
+                {/* Hero Section with Trending Tech News Carousel */}
                 <HeroTrendingNews />
 
                 <main className="home-main-content">
-                    {/* Latest News Section */}
+                    {/* Latest Tech News Section */}
                     <section className="home-section">
-                        <LatestNews title="Latest News" type="latestFour" />
+                        <LatestNews title="Latest Tech News" type="latestFour" />
                     </section>
 
-                    {/* Trending News Section */}
+                    {/* Trending Tech News Section */}
                     <section className="home-section">
                         <ShowFourTrendingNews />
                     </section>
 
-                    {/* Categories Section */}
+                    {/* Tech Categories Section */}
                     <section className="home-section">
                         <div className="section-header">
-                            <h2 className="section-title">Browse by Category</h2>
-                            <p className="section-subtitle">Discover news from different categories</p>
+                            <h2 className="section-title">Technology News</h2>
+                            <p className="section-subtitle">Discover the latest in technology and innovation</p>
                         </div>
                         <NewsDifferentType />
                     </section>

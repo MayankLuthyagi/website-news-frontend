@@ -8,28 +8,65 @@ export default function SourceManagement() {
     const [editingSource, setEditingSource] = useState(null);
     const [formData, setFormData] = useState({
         source_name: '',
-        rss_url: ''
+        rss_url: '',
+        category: ''
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [categories, setCategories] = useState([]);
+    const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
+    const [filteredSources, setFilteredSources] = useState([]);
+
+    const sourceCategories = [
+        'World', 'India', 'Tech', 'Politics', 'Sports',
+        'Entertainment', 'Health', 'Business', 'Finance', 'Education'
+    ];
 
     useEffect(() => {
         fetchSources();
+        fetchSourceCategories();
     }, []);
+
+    useEffect(() => {
+        // Filter sources based on selected category
+        if (selectedCategoryFilter) {
+            setFilteredSources(sources.filter(source => source.category === selectedCategoryFilter));
+        } else {
+            setFilteredSources(sources);
+        }
+    }, [sources, selectedCategoryFilter]);
 
     const fetchSources = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${config.api.base}/sources`);
+            const response = await fetch(`${config.api.base}${config.api.sources}`);
             if (response.ok) {
                 const data = await response.json();
-                setSources(data);
+                setSources(Array.isArray(data) ? data : []);
+            } else {
+                setError('Failed to fetch sources');
+                setSources([]);
             }
         } catch (error) {
             console.error('Error fetching sources:', error);
             setError('Failed to fetch sources');
+            setSources([]);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchSourceCategories = async () => {
+        try {
+            const response = await fetch(`${config.api.base}${config.api.sources}/categories`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.categories && Array.isArray(data.categories)) {
+                    setCategories(data.categories);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching source categories:', error);
         }
     };
 
@@ -63,8 +100,8 @@ export default function SourceManagement() {
 
         try {
             const url = editingSource
-                ? `${config.api.base}/sources/${editingSource.id}`
-                : `${config.api.base}/sources`;
+                ? `${config.api.base}${config.api.sources}/${editingSource.id}`
+                : `${config.api.base}${config.api.sources}`;
 
             const method = editingSource ? 'PUT' : 'POST';
 
@@ -94,7 +131,8 @@ export default function SourceManagement() {
         setEditingSource(source);
         setFormData({
             source_name: source.source_name || '',
-            rss_url: source.rss_url || ''
+            rss_url: source.rss_url || '',
+            category: source.category || ''
         });
         setShowForm(true);
     };
@@ -102,7 +140,7 @@ export default function SourceManagement() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this source? This will also affect all news items from this source.')) {
             try {
-                const response = await fetch(`${config.api.base}/sources/${id}`, {
+                const response = await fetch(`${config.api.base}${config.api.sources}/${id}`, {
                     method: 'DELETE'
                 });
 
@@ -122,7 +160,8 @@ export default function SourceManagement() {
     const resetForm = () => {
         setFormData({
             source_name: '',
-            rss_url: ''
+            rss_url: '',
+            category: ''
         });
         setEditingSource(null);
         setShowForm(false);
@@ -130,7 +169,7 @@ export default function SourceManagement() {
 
     const testRssFeed = async (url) => {
         try {
-            const response = await fetch(`${config.api.base}/sources/test-rss`, {
+            const response = await fetch(`${config.api.base}${config.api.sources}/test-rss`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -162,12 +201,14 @@ export default function SourceManagement() {
         <div className="admin-section">
             <div className="admin-section-header">
                 <h2>Source Management</h2>
-                <button
-                    className="admin-btn admin-btn-primary"
-                    onClick={() => setShowForm(!showForm)}
-                >
-                    {showForm ? 'Cancel' : '+ Add Source'}
-                </button>
+                <div className="admin-section-actions">
+                    <button
+                        className="admin-btn admin-btn-primary"
+                        onClick={() => setShowForm(!showForm)}
+                    >
+                        {showForm ? 'Cancel' : '+ Add Source'}
+                    </button>
+                </div>
             </div>
 
             {error && (
@@ -209,6 +250,28 @@ export default function SourceManagement() {
                             </div>
 
                             <div className="admin-form-group">
+                                <label htmlFor="category">Category *</label>
+                                <select
+                                    id="category"
+                                    name="category"
+                                    value={formData.category}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="admin-form-select"
+                                >
+                                    <option value="">Select Category</option>
+                                    {sourceCategories.map(category => (
+                                        <option key={category} value={category}>
+                                            {category}
+                                        </option>
+                                    ))}
+                                </select>
+                                <small className="admin-form-help">
+                                    Select the primary category for this news source
+                                </small>
+                            </div>
+
+                            <div className="admin-form-group admin-form-group-full">
                                 <label htmlFor="rss_url">RSS URL *</label>
                                 <div className="admin-input-group">
                                     <input
@@ -258,6 +321,7 @@ export default function SourceManagement() {
                             <tr>
                                 <th>ID</th>
                                 <th>Source Name</th>
+                                <th>Category</th>
                                 <th>RSS URL</th>
                                 <th>Status</th>
                                 <th>Created</th>
@@ -265,18 +329,26 @@ export default function SourceManagement() {
                             </tr>
                         </thead>
                         <tbody>
-                            {sources.length === 0 ? (
+                            {filteredSources.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="admin-table-empty">
-                                        No sources found
+                                    <td colSpan="7" className="admin-table-empty">
+                                        {selectedCategoryFilter
+                                            ? `No sources found for category: ${selectedCategoryFilter}`
+                                            : 'No sources found'
+                                        }
                                     </td>
                                 </tr>
                             ) : (
-                                sources.map(source => (
+                                filteredSources.map(source => (
                                     <tr key={source.id}>
                                         <td>#{source.id}</td>
                                         <td className="admin-table-title">
                                             <strong>{source.source_name}</strong>
+                                        </td>
+                                        <td>
+                                            <span className="admin-category-badge">
+                                                {source.category || 'N/A'}
+                                            </span>
                                         </td>
                                         <td className="admin-table-url">
                                             <a
@@ -285,8 +357,8 @@ export default function SourceManagement() {
                                                 rel="noopener noreferrer"
                                                 title={source.rss_url}
                                             >
-                                                {source.rss_url.length > 50
-                                                    ? `${source.rss_url.substring(0, 50)}...`
+                                                {source.rss_url.length > 40
+                                                    ? `${source.rss_url.substring(0, 40)}...`
                                                     : source.rss_url}
                                             </a>
                                         </td>
@@ -353,6 +425,14 @@ export default function SourceManagement() {
                     <div className="admin-stat">
                         <span className="admin-stat-number">{sources.filter(s => s.rss_url).length}</span>
                         <span className="admin-stat-label">Active RSS Feeds</span>
+                    </div>
+                    <div className="admin-stat">
+                        <span className="admin-stat-number">{sources.filter(s => s.category).length}</span>
+                        <span className="admin-stat-label">Categorized Sources</span>
+                    </div>
+                    <div className="admin-stat">
+                        <span className="admin-stat-number">{categories.length}</span>
+                        <span className="admin-stat-label">Categories</span>
                     </div>
                 </div>
             </div>

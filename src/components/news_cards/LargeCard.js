@@ -17,7 +17,7 @@ function formatRelativeDate(dateString) {
     return dateObj.toLocaleDateString();
 }
 
-export function LargeCard({ title, image, date, category, summary, source_id, source_name, url }) {
+export function LargeCard({ id, title, image, date, category, summary, source_id, source_name, url }) {
     const navigate = useNavigate();
     const [imageUrl, setImageUrl] = useState(image || null);
     const [imageError, setImageError] = useState(false);
@@ -34,14 +34,17 @@ export function LargeCard({ title, image, date, category, summary, source_id, so
 
         navigate(`/news-detail/${urlFriendlyTitle}`, {
             state: {
-                title,
-                summary,
-                url,
-                date,
-                source_id,
-                source_name,
-                category,
-                image: imageUrl
+                newsData: {
+                    id,
+                    title,
+                    summary,
+                    url,
+                    date,
+                    source_id,
+                    source_name,
+                    category,
+                    image: imageUrl
+                }
             }
         });
     };
@@ -51,27 +54,37 @@ export function LargeCard({ title, image, date, category, summary, source_id, so
         setImageUrl(null);
     };
 
-    // Handle image fallback when no initial image - use category-based images
+    // Handle image fallback when no initial image - use tech category images only
     useEffect(() => {
         if (!image && category) {
             const firstCategory = category.split(',')[0].trim();
 
-            // Map category to proper image filename
+            // Map tech categories/subcategories to proper image filename
             const categoryMapping = {
-                'business': 'Business',
                 'tech': 'Tech',
                 'technology': 'Tech',
-                'sports': 'Sports',
-                'entertainment': 'Entertainment',
-                'health': 'Health',
-                'politics': 'Politics',
-                'world': 'World',
-                'india': 'India',
-                'finance': 'Finance',
-                'education': 'Education'
+                'ai': 'Tech',
+                'cybersecurity': 'Tech',
+                'quantum computing': 'Tech',
+                'ar/vr': 'Tech',
+                'edge computing': 'Tech',
+                '6g & iot': 'Tech',
+                'sustainable tech': 'Tech',
+                'gadgets': 'Tech',
+                'internet': 'Tech',
+                'gaming': 'Tech',
+                'cloud': 'Tech',
+                'semiconductors': 'Tech',
+                'web3': 'Tech',
+                'green tech': 'Tech',
+                'edtech': 'Tech',
+                'healthtech': 'Tech',
+                'autotech': 'Tech',
+                'space tech': 'Tech'
             };
 
-            const mappedCategory = categoryMapping[firstCategory.toLowerCase()] || 'World';
+            // Always default to Tech image for this tech news website
+            const mappedCategory = categoryMapping[firstCategory.toLowerCase()] || 'Tech';
             const categoryImageUrl = `/images/${mappedCategory}.png`;
             setImageUrl(categoryImageUrl);
         }
