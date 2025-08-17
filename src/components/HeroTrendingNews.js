@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { LargeCard } from "./news_cards/LargeCard";
+import ModernNewsCard from "./news_cards/ModernNewsCard";
 import config from "../config/config";
+import '../modern-theme.css';
 
 export default function HeroTrendingNews() {
     const [trendingNews, setTrendingNews] = useState([]);
@@ -74,12 +75,12 @@ export default function HeroTrendingNews() {
     }, [trendingNews.length]);
 
     return (
-        <div className="home-hero-section">
+        <div className="hero-trending-section">
             {loading ? (
                 <div className="loading">Loading trending tech news...</div>
             ) : trendingNews.length > 0 ? (
-                <div className="hero-carousel">
-                    <LargeCard
+                <div className="hero-carousel-modern">
+                    <ModernNewsCard
                         key={trendingNews[currentNewsIndex].id || currentNewsIndex}
                         id={trendingNews[currentNewsIndex].id}
                         title={trendingNews[currentNewsIndex].title}
@@ -90,6 +91,7 @@ export default function HeroTrendingNews() {
                         source_id={trendingNews[currentNewsIndex].source_id}
                         source_name={trendingNews[currentNewsIndex].source_name}
                         url={trendingNews[currentNewsIndex].link}
+                        variant="hero"
                     />
 
                     {/* Navigation dots */}

@@ -3,7 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import SidebarNewsCard from '../components/SidebarNewsCard';
 import { Helmet } from 'react-helmet-async';
 import config from '../config/config';
-import '../index.css';
+import '../modern-theme.css';
 
 function formatRelativeDate(dateString) {
     const dateObj = new Date(dateString);
@@ -22,13 +22,35 @@ function formatRelativeDate(dateString) {
 
 function NewsDetail() {
     const location = useLocation();
-    const { title: urlTitle } = useParams();
+    const { title: urlTitle, id: newsId } = useParams();
+    const [newsData, setNewsData] = useState(location.state?.newsData || null);
     const [relatedNews, setRelatedNews] = useState([]);
     const [sourceName, setSourceName] = useState('');
     const [loading, setLoading] = useState(true);
+    const [newsLoading, setNewsLoading] = useState(!newsData);
 
-    // Get news data from location state (passed from NewsCard)
-    const newsData = location.state?.newsData;
+    // Get initial news data from location state (passed from NewsCard/NewsTicker)
+    const initialNewsData = location.state?.newsData;
+
+    // Function to fetch news by ID
+    const fetchNewsById = async (id) => {
+        try {
+            const response = await fetch(`${config.api.base}${config.api.news}/${id}`);
+            if (response.ok) {
+                const fetchedNewsData = await response.json();
+                setNewsData(fetchedNewsData);
+                console.log('Fetched news by ID:', fetchedNewsData);
+            } else {
+                console.error('Failed to fetch news by ID:', response.status);
+                // You might want to show an error message or redirect
+            }
+        } catch (error) {
+            console.error('Error fetching news by ID:', error);
+            // You might want to show an error message or redirect
+        } finally {
+            setNewsLoading(false);
+        }
+    };
 
     // If no newsData from navigation state, we might need to handle this case
     // For now, let's just log it for debugging
@@ -45,6 +67,15 @@ function NewsDetail() {
         setLoading(true);
         setRelatedNews([]);
 
+        // If no newsData and we have a newsId, fetch the news by ID
+        if (!initialNewsData && newsId) {
+            setNewsLoading(true);
+            fetchNewsById(newsId);
+        } else if (initialNewsData) {
+            setNewsData(initialNewsData);
+            setNewsLoading(false);
+        }
+
         // Remove console logging in production
         // console.log('NewsDetail useEffect triggered:', {
         //     urlTitle,
@@ -52,6 +83,12 @@ function NewsDetail() {
         //     newsDataTitle: newsData?.title,
         //     pathname: location.pathname
         // });
+
+    }, [newsId, initialNewsData, urlTitle, location.pathname]);
+
+    // Separate useEffect for handling newsData-dependent operations
+    useEffect(() => {
+        if (!newsData) return;
 
         // Set source name from newsData if available
         if (newsData?.source_name) {
@@ -100,12 +137,8 @@ function NewsDetail() {
             setLoading(false);
         }
 
-        if (newsData) {
-            fetchRelatedNews();
-        } else {
-            setLoading(false);
-        }
-    }, [newsData, urlTitle, location.pathname, location.state]);
+        fetchRelatedNews();
+    }, [newsData]);
 
     const handleReadFullArticle = async () => {
         // Increment view count if we have an ID
@@ -129,6 +162,15 @@ function NewsDetail() {
         return (
             <div className="news-detail-loading">
                 <div className="loading-spinner"></div>
+                <p>Loading article...</p>
+            </div>
+        );
+    }
+
+    // Show loading state if we're fetching news by ID
+    if (newsLoading) {
+        return (
+            <div className="news-detail-loading">
                 <p>Loading article...</p>
             </div>
         );

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import NewsCard from './news_cards/NewsCard';
+import ModernNewsCard from './news_cards/ModernNewsCard';
 import config from '../config/config';
-import '../index.css';
+import '../modern-theme.css';
 export default function LatestNews({ title, type }) {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,17 +54,13 @@ export default function LatestNews({ title, type }) {
   }, [type]);
   return (
     <div>
-      <div className='latest-news-header'>
-        <h2>{title}</h2>
-        <a href="/latest-news">View All</a>
-      </div>
       <div className="news-grid">
         {loading ? (
           <p>Loading news...</p>
         ) : newsList.length > 0 ? (
           newsList.map((news, idx) => (
-            <NewsCard
-              key={idx}
+            <ModernNewsCard
+              key={news.id || idx}
               id={news.id}
               title={news.title}
               image={news.image}
@@ -74,6 +70,7 @@ export default function LatestNews({ title, type }) {
               source_id={news.source_id}
               source_name={news.source_name}
               url={news.link}
+              variant={idx === 0 ? 'featured' : 'default'}
             />
           ))
         ) : (

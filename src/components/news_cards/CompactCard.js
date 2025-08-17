@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../../config/config';
-import '../../index.css';
+import '../../modern-theme.css';
 
 function formatRelativeDate(dateString) {
     const dateObj = new Date(dateString);
@@ -25,27 +25,32 @@ function CompactCard({ id, title, summary, url, date, source_id, source_name, ca
     const handleCardClick = (e) => {
         e.preventDefault();
 
-        // Create URL-friendly title
+        // Create URL-friendly title with dashes
         const urlFriendlyTitle = title.toLowerCase()
             .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-            .replace(/\s+/g, '-') // Replace spaces with hyphens
-            .replace(/-+/g, '-') // Replace multiple hyphens with single
-            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+            .replace(/\s+/g, '-') // Replace spaces with dashes
+            .replace(/-+/g, '-') // Replace multiple dashes with single dash
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
 
-        // Navigate to news detail page with news data
-        navigate(`/news-detail/${urlFriendlyTitle}`, {
+        // Create news data object to pass to NewsDetail
+        const newsDataObj = {
+            _id: id,
+            id: id,
+            title,
+            summary,
+            link: url,
+            url: url,
+            date,
+            source_id,
+            source_name: sourceName,
+            category,
+            image
+        };
+
+        // Navigate to news detail page using title-based route
+        navigate(`/news/${urlFriendlyTitle}`, {
             state: {
-                newsData: {
-                    id,
-                    title,
-                    summary,
-                    url,
-                    date,
-                    source_id,
-                    source_name: sourceName,
-                    category,
-                    image
-                }
+                newsData: newsDataObj
             }
         });
     };

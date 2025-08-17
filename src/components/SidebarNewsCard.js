@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../config/config';
-import '../index.css';
+import '../modern-theme.css';
 
 function formatRelativeDate(dateString) {
     const dateObj = new Date(dateString);
@@ -18,7 +18,7 @@ function formatRelativeDate(dateString) {
     return dateObj.toLocaleDateString();
 }
 
-function SidebarNewsCard({ title, summary, url, date, source_id, source_name, category, image, newsData }) {
+function SidebarNewsCard({ id, title, summary, url, date, source_id, source_name, category, image, newsData }) {
     const navigate = useNavigate();
     const [sourceName, setSourceName] = useState(source_name || 'Unknown Source');
     const [imageUrl, setImageUrl] = useState(image || null);
@@ -128,26 +128,33 @@ function SidebarNewsCard({ title, summary, url, date, source_id, source_name, ca
 
     const handleCardClick = (e) => {
         e.preventDefault();
-        // Create URL-friendly title
+
+        // Create URL-friendly title with dashes
         const urlFriendlyTitle = title.toLowerCase()
             .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-            .replace(/\s+/g, '-') // Replace spaces with hyphens
-            .replace(/-+/g, '-') // Replace multiple hyphens with single
-            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+            .replace(/\s+/g, '-') // Replace spaces with dashes
+            .replace(/-+/g, '-') // Replace multiple dashes with single dash
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
 
-        navigate(`/news-detail/${urlFriendlyTitle}`, {
+        // Create news data object to pass to NewsDetail
+        const newsDataObj = newsData || {
+            _id: id,
+            id: id,
+            title,
+            summary,
+            link: url,
+            url: url,
+            date,
+            source_id,
+            source_name: sourceName,
+            category,
+            image
+        };
+
+        // Navigate to news detail page using title-based route
+        navigate(`/news/${urlFriendlyTitle}`, {
             state: {
-                newsData: newsData || {
-                    title,
-                    summary,
-                    link: url, // Keep it as 'link' to match the API data structure
-                    url: url,  // Also keep 'url' for backward compatibility
-                    date,
-                    source_id,
-                    source_name: sourceName,
-                    category,
-                    image
-                }
+                newsData: newsDataObj
             }
         });
     };

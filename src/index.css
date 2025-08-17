@@ -1,4 +1,8 @@
-/* Global Vintage Newspaper Theme Styles */
+/* Import Modern Tech Theme */
+@import url('./modern-theme.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
+
+/* Global Vintage Newspaper Theme Styles - LEGACY */
 * {
   box-sizing: border-box;
 }
@@ -1189,7 +1193,7 @@ body {
 
 .latest-news-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-center;
   align-items: center;
 }
 
@@ -2016,6 +2020,7 @@ body {
 }
 
 .latest-news-header a {
+  display: flex;
   color: #654321;
   text-decoration: none;
   font-weight: 600;
@@ -2159,12 +2164,19 @@ body {
   }
 
   .latest-news-header {
+    display: flex;
+    /* Enable flex */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically (if needed) */
     flex-direction: column;
     gap: 0.8rem;
     text-align: center;
     padding: 0.8rem 1rem;
     margin-bottom: 1rem;
   }
+
 
   .news-type-list {
     flex-direction: column;
@@ -4325,5 +4337,41 @@ body {
   .admin-select {
     min-width: auto;
     width: 100%;
+  }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500&family=Unbounded:wght@600;800&display=swap');
+
+
+.main-heading {
+  font-family: 'Unbounded', sans-serif;
+  color: #111;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-block: 2rem;
+}
+
+/* Dark mode using [data-theme="dark"] */
+[data-theme="dark"] .main-heading {
+  color: var(--text-primary);
+}
+
+/* Responsive font sizes */
+@media (min-width: 640px) {
+  .main-heading {
+    font-size: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-heading {
+    font-size: 8rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .main-heading {
+    font-size: 10rem;
   }
 }

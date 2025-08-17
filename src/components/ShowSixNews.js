@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import NewsCard from './news_cards/NewsCard';
+import ModernNewsCard from './news_cards/ModernNewsCard';
 import config from '../config/config';
-import '../index.css';
+import '../modern-theme.css';
 export default function ShowThreeNews({ category }) {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,8 +78,8 @@ export default function ShowThreeNews({ category }) {
         </div>
       ) : newsList.length > 0 ? (
         newsList.map((news, idx) => (
-          <NewsCard
-            key={idx}
+          <ModernNewsCard
+            key={news.id || idx}
             id={news.id}
             title={news.title}
             image={news.image}
@@ -89,6 +89,7 @@ export default function ShowThreeNews({ category }) {
             source_id={news.source_id}
             source_name={news.source_name}
             url={news.link}
+            variant="default"
           />
         ))
       ) : (

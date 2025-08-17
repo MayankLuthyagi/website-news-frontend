@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../index.css';
+import ThemeToggle from '../components/ThemeToggle';
+import '../modern-theme.css';
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -63,7 +64,6 @@ function Navbar() {
               <div className="dropdown-section-content">
                 <Link to="/category/AI">AI</Link>
                 <Link to="/category/Cybersecurity">Cybersecurity</Link>
-                <Link to="/category/Quantum Computing">Quantum Computing</Link>
                 <Link to="/category/AR/VR">AR/VR</Link>
                 <Link to="/category/Edge Computing">Edge Computing</Link>
                 <Link to="/category/6G & IoT">6G & IoT</Link>
@@ -78,7 +78,6 @@ function Navbar() {
                 <Link to="/category/Gadgets">Gadgets</Link>
                 <Link to="/category/Cloud">Cloud</Link>
                 <Link to="/category/Semiconductors">Semiconductors</Link>
-                <Link to="/category/Web3">Web3</Link>
                 <Link to="/category/Green Tech">Green Tech</Link>
                 <Link to="/category/EdTech">EdTech</Link>
                 <Link to="/category/HealthTech">HealthTech</Link>
@@ -90,6 +89,9 @@ function Navbar() {
         </li>
         <li><Link to="/about" className="nav-link">About</Link></li>
         <li><Link to="/contact" className="nav-link">Contact</Link></li>
+        <li className="nav-actions">
+          <ThemeToggle />
+        </li>
       </ul>
     </nav>
   );

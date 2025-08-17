@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../../config/config';
-import '../../index.css';
+import '../../modern-theme.css';
 
 function formatRelativeDate(dateString) {
   const dateObj = new Date(dateString);
@@ -11,27 +11,27 @@ function formatRelativeDate(dateString) {
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);
   const diffDay = Math.floor(diffHour / 24);
-  
+
   if (diffSec < 60) return 'just now';
   if (diffMin < 60) return `${diffMin}m ago`;
   if (diffHour < 24) return `${diffHour}h ago`;
   if (diffDay < 7) return `${diffDay}d ago`;
-  return dateObj.toLocaleDateString('en-US', { 
-    month: 'short', 
+  return dateObj.toLocaleDateString('en-US', {
+    month: 'short',
     day: 'numeric',
     year: dateObj.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
   });
 }
 
-function NewsCard({ 
-  id, 
-  title, 
-  summary, 
-  url, 
-  date, 
-  source_id, 
-  source_name, 
-  category, 
+function NewsCard({
+  id,
+  title,
+  summary,
+  url,
+  date,
+  source_id,
+  source_name,
+  category,
   image,
   variant = 'default' // 'default', 'featured', 'compact'
 }) {
@@ -43,27 +43,32 @@ function NewsCard({
   const handleCardClick = (e) => {
     e.preventDefault();
 
-    // Create URL-friendly title
+    // Create URL-friendly title with dashes
     const urlFriendlyTitle = title.toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single
-      .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+      .replace(/\s+/g, '-') // Replace spaces with dashes
+      .replace(/-+/g, '-') // Replace multiple dashes with single dash
+      .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
 
-    // Navigate to news detail page with news data
-    navigate(`/news-detail/${urlFriendlyTitle}`, {
+    // Create news data object to pass to NewsDetail
+    const newsData = {
+      _id: id,
+      id: id,
+      title,
+      summary,
+      url,
+      link: url,
+      date,
+      source_id,
+      source_name: sourceName,
+      category,
+      image: imageUrl
+    };
+
+    // Navigate to news detail page using title-based route
+    navigate(`/news/${urlFriendlyTitle}`, {
       state: {
-        newsData: {
-          id,
-          title,
-          summary,
-          url,
-          date,
-          source_id,
-          source_name: sourceName,
-          category,
-          image: imageUrl
-        }
+        newsData: newsData
       }
     });
   };
@@ -106,7 +111,7 @@ function NewsCard({
   useEffect(() => {
     if (!image && category) {
       const firstCategory = category.split(',')[0].trim().toLowerCase();
-      
+
       // Map category to proper image filename
       const categoryMapping = {
         'tech': 'Tech',
@@ -166,7 +171,7 @@ function NewsCard({
   const cardClassName = `news-card ${variant === 'featured' ? 'featured' : ''} ${variant === 'compact' ? 'compact' : ''}`.trim();
 
   return (
-    <article 
+    <article
       className={cardClassName}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
@@ -175,7 +180,7 @@ function NewsCard({
       aria-label={`Read article: ${title}`}
     >
       {imageUrl && !imageError && (
-        <img 
+        <img
           src={imageUrl}
           alt={title}
           className="news-card-image"
@@ -183,7 +188,7 @@ function NewsCard({
           loading="lazy"
         />
       )}
-      
+
       <div className="news-card-content">
         <div className="news-card-header">
           {category && (
@@ -192,17 +197,17 @@ function NewsCard({
             </span>
           )}
         </div>
-        
+
         <h3 className="news-card-title">
           {title}
         </h3>
-        
+
         {summary && (
           <p className="news-card-summary">
             {summary}
           </p>
         )}
-        
+
         <div className="news-card-footer">
           <div className="news-card-meta">
             <span className="news-card-source">{sourceName}</span>
@@ -217,4 +222,3 @@ function NewsCard({
 }
 
 export default NewsCard;
-      

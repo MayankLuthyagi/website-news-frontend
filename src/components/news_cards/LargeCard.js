@@ -25,26 +25,32 @@ export function LargeCard({ id, title, image, date, category, summary, source_id
     const handleCardClick = (e) => {
         e.preventDefault();
 
-        // Create URL-friendly title
-        const urlFriendlyTitle = title
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, '') // Remove special characters
-            .replace(/\s+/g, '-') // Replace spaces with hyphens
-            .trim();
+        // Create URL-friendly title with dashes
+        const urlFriendlyTitle = title.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+            .replace(/\s+/g, '-') // Replace spaces with dashes
+            .replace(/-+/g, '-') // Replace multiple dashes with single dash
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
 
-        navigate(`/news-detail/${urlFriendlyTitle}`, {
+        // Create news data object to pass to NewsDetail
+        const newsDataObj = {
+            _id: id,
+            id: id,
+            title,
+            summary,
+            link: url,
+            url: url,
+            date,
+            source_id,
+            source_name,
+            category,
+            image: imageUrl
+        };
+
+        // Navigate to news detail page using title-based route
+        navigate(`/news/${urlFriendlyTitle}`, {
             state: {
-                newsData: {
-                    id,
-                    title,
-                    summary,
-                    url,
-                    date,
-                    source_id,
-                    source_name,
-                    category,
-                    image: imageUrl
-                }
+                newsData: newsDataObj
             }
         });
     };
