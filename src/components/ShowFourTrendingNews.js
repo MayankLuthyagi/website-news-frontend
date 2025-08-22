@@ -55,11 +55,16 @@ export default function ShowThreeTrendingNews({ category }) {
 
     fetchNews();
   }, [category]); // <-- add category here
+
+    const getImageSource = (news) => {
+      if (news.image && news.image.trim() !== "") {
+        return news.image;
+      }
+      return "/images/Tech.png"; // fallback image
+    };
   return (
     <>
-      <div className='latest-news-header'>
-        <a href="/latest-news">Trending</a>
-      </div>
+
       <div className="news-grid">
         {loading ? (
           <p>Loading news...</p>
@@ -69,7 +74,7 @@ export default function ShowThreeTrendingNews({ category }) {
               key={news.id || idx}
               id={news.id}
               title={news.title}
-              image={news.image}
+              image={getImageSource(news)}
               date={news.date}
               category={news.category}
               summary={news.summary}

@@ -60,7 +60,12 @@ export default function HeroTrendingNews() {
 
         fetchTrendingNews();
     }, []);
-
+    const getImageSource = (news) => {
+      if (news.image && news.image.trim() !== "") {
+        return news.image;
+      }
+      return "/images/Tech.png"; // fallback image
+    };
     // Auto-slide effect
     useEffect(() => {
         if (trendingNews.length > 0) {
@@ -84,7 +89,7 @@ export default function HeroTrendingNews() {
                         key={trendingNews[currentNewsIndex].id || currentNewsIndex}
                         id={trendingNews[currentNewsIndex].id}
                         title={trendingNews[currentNewsIndex].title}
-                        image={trendingNews[currentNewsIndex].image}
+                        image={getImageSource(trendingNews[currentNewsIndex])}
                         date={trendingNews[currentNewsIndex].date}
                         category={trendingNews[currentNewsIndex].category}
                         summary={trendingNews[currentNewsIndex].summary}

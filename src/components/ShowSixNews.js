@@ -6,7 +6,12 @@ export default function ShowThreeNews({ category }) {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const getImageSource = (news) => {
+      if (news.image && news.image.trim() !== "") {
+        return news.image;
+      }
+      return "/images/Tech.png"; // fallback image
+    };
   useEffect(() => {
     const fetchNews = async () => {
       setLoading(true);
@@ -82,7 +87,7 @@ export default function ShowThreeNews({ category }) {
             key={news.id || idx}
             id={news.id}
             title={news.title}
-            image={news.image}
+            image={getImageSource(news)}
             date={news.date}
             category={news.category}
             summary={news.summary}
