@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ModernNewsCard from './news_cards/ModernNewsCard';
+import SideModernNewsCard from './news_cards/SideModernNewsCard';
 import config from '../config/config';
 import '../modern-theme.css';
 export default function ShowThreeTrendingNews({ category }) {
@@ -70,7 +70,7 @@ export default function ShowThreeTrendingNews({ category }) {
           <p>Loading news...</p>
         ) : newsList.length > 0 ? (
           newsList.map((news, idx) => (
-            <ModernNewsCard
+            <SideModernNewsCard
               key={news.id || idx}
               id={news.id}
               title={news.title}

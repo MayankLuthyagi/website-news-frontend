@@ -48,50 +48,6 @@ export default function Home() {
                                 </div>
                             </section>
 
-                            {/* Trending Categories Widget */}
-                            <section className="trending-categories">
-                                <div className="category-header">
-                                    <h3 className="category-title">
-                                        Trending Topics
-                                    </h3>
-                                    <div className="category-line trending-line"></div>
-                                </div>
-                                <div className="trending-tags">
-                                    <span className="trending-tag blockchain">Blockchain</span>
-                                    <span className="trending-tag ai">Machine Learning</span>
-                                    <span className="trending-tag iot">IoT Devices</span>
-                                    <span className="trending-tag cyber">Cybersecurity</span>
-                                    <span className="trending-tag space">Space Tech</span>
-                                </div>
-                            </section>
-
-                            {/* Quick Stats Widget */}
-                            <section className="tech-stats">
-                                <div className="category-header">
-                                    <h3 className="category-title">
-                                        Tech Pulse
-                                    </h3>
-                                    <div className="category-line stats-line"></div>
-                                </div>
-                                <div className="stats-grid">
-                                    <div className="stat-item">
-                                        <span className="stat-number">2.4B</span>
-                                        <span className="stat-label">Daily Users</span>
-                                    </div>
-                                    <div className="stat-item">
-                                        <span className="stat-number">156K</span>
-                                        <span className="stat-label">AI Models</span>
-                                    </div>
-                                    <div className="stat-item">
-                                        <span className="stat-number">89%</span>
-                                        <span className="stat-label">Cloud Adoption</span>
-                                    </div>
-                                    <div className="stat-item">
-                                        <span className="stat-number">$2.1T</span>
-                                        <span className="stat-label">Tech Market</span>
-                                    </div>
-                                </div>
-                            </section>
                         </aside>
                     </div>
                 </main>
