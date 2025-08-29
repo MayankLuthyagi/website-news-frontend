@@ -23,7 +23,7 @@ export default function CategoryNews() {
         india: 'National',
         finance: 'Finance',
         education: 'Education',
-        tech: 'Technology',
+        tech: 'Tech',
         business: 'Business',
         politics: 'Politics',
         sports: 'Sports',
