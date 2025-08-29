@@ -17,7 +17,7 @@ function formatRelativeDate(dateString) {
     return dateObj.toLocaleDateString();
 }
 
-function FullImageCard({ id, title, summary, url, date, source_id, source_name, category, image }) {
+function FullImageCard({ id, title, summary, url, date, source_id, source_name, category, subcategory, image }) {
     const navigate = useNavigate();
     const [sourceName, setSourceName] = useState(source_name || 'Unknown Source');
     const [imageUrl, setImageUrl] = useState(image || null);
@@ -45,6 +45,7 @@ function FullImageCard({ id, title, summary, url, date, source_id, source_name, 
             source_id,
             source_name: sourceName,
             category,
+            subcategory,
             image
         };
 
@@ -151,7 +152,11 @@ function FullImageCard({ id, title, summary, url, date, source_id, source_name, 
 
         return finalText + '...';
     };
-
+    const trimTitle = (str, val) => {
+        if (!str || str=='') return 'Briefli Special...';
+        const trimmed = str.length > val ? str.substring(0, val) + '...' : str;
+        return trimmed;
+    }
     return (
         <a
             className="full-image-card"
@@ -175,17 +180,10 @@ function FullImageCard({ id, title, summary, url, date, source_id, source_name, 
 
             <div className="full-image-card-overlay">
                 <div className="full-image-card-header">
-                    <div className="full-image-card-category">
-                        {category && (
-                            <span className={`category-${category.split(',')[0].trim().toLowerCase().replace(/\s+/g, '-')}`}>
-                                {category.split(',')[0].trim()}
-                            </span>
-                        )}
-                    </div>
                     <div className="full-image-card-date">{sourceName} · {formatRelativeDate(date)}</div>
                 </div>
                 <div className="full-image-card-content">
-                    <h3 className="full-image-card-title">{title.trim()}</h3>
+                    <h3 className="full-image-card-title">{trimTitle(title, 70)}</h3>
                     <p className="full-image-card-summary">{truncateSummary(summary)}</p>
                 </div>
             </div>

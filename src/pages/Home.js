@@ -1,11 +1,10 @@
-import LatestNews from "../components/LatestNews";
-import Subscribe from "../components/Subscribe";
+import TrendingNews from "../components/ShowTrendingNews";
 import NewsDifferentType from "../components/NewsDifferentType";
 import NewsTicker from "../components/NewsTicker";
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import '../modern-theme.css';
-import ShowFourTrendingNews from "../components/ShowFourTrendingNews";
+import ShowTodayNews from "../components/ShowTodayNews";
 import HeroTrendingNews from "../components/HeroTrendingNews";
 
 export default function Home() {
@@ -35,8 +34,7 @@ export default function Home() {
                     <div className="grid-container">
                         {/* Left Column - Featured News */}
                         <section className="grid-column main-column">
-                            <HeroTrendingNews />
-                            <LatestNews title="" type="latestFour" />
+                            <TrendingNews/>
                         </section>
 
                         {/* Right Column - Category Sections */}
@@ -44,7 +42,7 @@ export default function Home() {
                             {/* AI News Section */}
                             <section className="category-section ai-section">
                                 <div className="category-content">
-                                    <ShowFourTrendingNews />
+                                    <ShowTodayNews  />
                                 </div>
                             </section>
 
@@ -54,18 +52,7 @@ export default function Home() {
 
                 {/* Categories Grid Section */}
                 <section className="categories-grid-section">
-                    <div className="section-header centered">
-                        <h2 className="section-title">
-                            Explore Tech Categories
-                        </h2>
-                        <p className="section-description">Dive deep into specific technology domains</p>
-                    </div>
                     <NewsDifferentType />
-                </section>
-
-                {/* Newsletter Section */}
-                <section className="newsletter-section">
-                    <Subscribe />
                 </section>
             </div>
         </>

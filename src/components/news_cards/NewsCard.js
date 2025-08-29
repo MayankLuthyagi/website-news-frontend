@@ -32,6 +32,7 @@ function NewsCard({
   source_id,
   source_name,
   category,
+  subcategory,
   image,
   variant = 'default' // 'default', 'featured', 'compact'
 }) {
@@ -62,6 +63,7 @@ function NewsCard({
       source_id,
       source_name: sourceName,
       category,
+      subcategory,
       image: imageUrl
     };
 
@@ -190,13 +192,6 @@ function NewsCard({
       )}
 
       <div className="news-card-content">
-        <div className="news-card-header">
-          {category && (
-            <span className={`category-badge ${getCategoryClass()}`}>
-              {category}
-            </span>
-          )}
-        </div>
 
         <h3 className="news-card-title">
           {title}

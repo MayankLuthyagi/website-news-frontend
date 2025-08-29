@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ShowSixNews from './ShowSixNews';
+import ShowEightNews from './ShowEightNews';
 import '../modern-theme.css';
 
 export default function NewsDifferentType() {
@@ -11,7 +11,6 @@ export default function NewsDifferentType() {
                 <ul className="news-type-list">
                     <li onClick={() => setSelectedType('AI')} className={selectedType === 'AI' ? 'active' : ''}>AI</li>
                     <li onClick={() => setSelectedType('Cybersecurity')} className={selectedType === 'Cybersecurity' ? 'active' : ''}>Cybersecurity</li>
-                    <li onClick={() => setSelectedType('Quantum Computing')} className={selectedType === 'Quantum Computing' ? 'active' : ''}>Quantum Computing</li>
                     <li onClick={() => setSelectedType('AR/VR')} className={selectedType === 'AR/VR' ? 'active' : ''}>AR/VR</li>
                     <li onClick={() => setSelectedType('Edge Computing')} className={selectedType === 'Edge Computing' ? 'active' : ''}>Edge Computing</li>
                     <li onClick={() => setSelectedType('6G & IoT')} className={selectedType === '6G & IoT' ? 'active' : ''}>6G & IoT</li>
@@ -22,14 +21,9 @@ export default function NewsDifferentType() {
                     <li onClick={() => setSelectedType('Cloud')} className={selectedType === 'Cloud' ? 'active' : ''}>Cloud</li>
                     <li onClick={() => setSelectedType('Semiconductors')} className={selectedType === 'Semiconductors' ? 'active' : ''}>Semiconductors</li>
                     <li onClick={() => setSelectedType('Web3')} className={selectedType === 'Web3' ? 'active' : ''}>Web3</li>
-                    <li onClick={() => setSelectedType('Green Tech')} className={selectedType === 'Green Tech' ? 'active' : ''}>Green Tech</li>
-                    <li onClick={() => setSelectedType('EdTech')} className={selectedType === 'EdTech' ? 'active' : ''}>EdTech</li>
-                    <li onClick={() => setSelectedType('HealthTech')} className={selectedType === 'HealthTech' ? 'active' : ''}>HealthTech</li>
-                    <li onClick={() => setSelectedType('Autotech')} className={selectedType === 'Autotech' ? 'active' : ''}>Autotech</li>
-                    <li onClick={() => setSelectedType('Space Tech')} className={selectedType === 'Space Tech' ? 'active' : ''}>Space Tech</li>
                 </ul>
             </section>
-            <ShowSixNews category={selectedType} />
+            <ShowEightNews category={selectedType} />
         </>
     );
 }   

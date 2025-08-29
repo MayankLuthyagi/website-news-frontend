@@ -6,13 +6,16 @@ import CompactCard from '../components/news_cards/CompactCard';
 import FullImageCard from '../components/news_cards/FullImageCard';
 import SideImageCard from '../components/news_cards/SideImageCard';
 import '../index.css';
+import '../modern-theme.css';
 import { Helmet } from 'react-helmet-async';
+import { useTheme } from '../contexts/ThemeContext';
 import config from '../config/config';
 
 export default function CategoryNews() {
     const { categoryName } = useParams();
     const [newsList, setNewsList] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { isDarkMode } = useTheme();
 
     // Category display names mapping
     const categoryDisplayNames = {
@@ -224,13 +227,14 @@ export default function CategoryNews() {
                     })}
                 </script>
             </Helmet>
-
-            <div className="all-news-container">
-                <div className="all-news-header">
-                    <h1>{displayName} News</h1>
-                    <p>Stay informed with the latest {displayName.toLowerCase()} news and updates</p>
+            <section className="brand-header">
+                <div className="brand-container">
+                    <h1 className="main-brand-title">
+                        <span className="other-heading">{displayName} News</span>
+                    </h1>
                 </div>
-
+            </section>
+            <div className="all-news-container">
                 {loading ? (
                     <div className="loading-section">
                         <p>Loading {displayName.toLowerCase()} news...</p>
@@ -240,7 +244,6 @@ export default function CategoryNews() {
                         {/* Featured News Section */}
                         {newsList.length > 0 && (
                             <section className="featured-news-section">
-                                <h2 className="section-title">Featured {displayName} Stories</h2>
                                 <div className="featured-news-grid">
                                     {newsList.slice(0, 3).map((news, idx) => (
                                         <FeaturedCard
@@ -250,6 +253,7 @@ export default function CategoryNews() {
                                             image={news.image || news.urlToImage || null}
                                             date={news.date || news.published_at || new Date().toISOString()}
                                             category={news.category || categoryName}
+                                            subcategory={news.subcategory || 'Tech'}
                                             summary={news.summary || news.description || 'No summary available'}
                                             source_id={news.source_id || 'unknown'}
                                             source_name={news.source_name || 'Unknown Source'}
@@ -263,7 +267,6 @@ export default function CategoryNews() {
                         {/* Breaking News Section */}
                         {newsList.length > 3 && (
                             <section className="breaking-news-section">
-                                <h2 className="section-title">Breaking {displayName} News</h2>
                                 <div className="breaking-news-grid">
                                     {newsList.slice(3, 9).map((news, idx) => (
                                         <CompactCard
@@ -273,6 +276,7 @@ export default function CategoryNews() {
                                             image={news.image || news.urlToImage || null}
                                             date={news.date || news.published_at || new Date().toISOString()}
                                             category={news.category || categoryName}
+                                            subcategory={news.subcategory || 'Tech'}
                                             summary={news.summary || news.description || 'No summary available'}
                                             source_id={news.source_id || 'unknown'}
                                             source_name={news.source_name || 'Unknown Source'}
@@ -286,7 +290,6 @@ export default function CategoryNews() {
                         {/* Full Image Stories Section */}
                         {newsList.length > 9 && (
                             <section className="full-image-section">
-                                <h2 className="section-title">{displayName} In Focus</h2>
                                 <div className="full-image-grid">
                                     {newsList.slice(9, 12).map((news, idx) => (
                                         <FullImageCard
@@ -296,6 +299,7 @@ export default function CategoryNews() {
                                             image={news.image || news.urlToImage || null}
                                             date={news.date || news.published_at || new Date().toISOString()}
                                             category={news.category || categoryName}
+                                            subcategory={news.subcategory || 'Tech'}
                                             summary={news.summary || news.description || 'No summary available'}
                                             source_id={news.source_id || 'unknown'}
                                             source_name={news.source_name || 'Unknown Source'}
@@ -309,9 +313,8 @@ export default function CategoryNews() {
                         {/* Quick Reads Section */}
                         {newsList.length > 12 && (
                             <section className="quick-reads-section">
-                                <h2 className="section-title">{displayName} Quick Reads</h2>
                                 <div className="quick-reads-grid">
-                                    {newsList.slice(12, 20).map((news, idx) => (
+                                    {newsList.slice(12, 21).map((news, idx) => (
                                         <SideImageCard
                                             key={`quick-${idx}`}
                                             id={news.id || `news-${idx + 12}`}
@@ -319,6 +322,7 @@ export default function CategoryNews() {
                                             image={news.image || news.urlToImage || null}
                                             date={news.date || news.published_at || new Date().toISOString()}
                                             category={news.category || categoryName}
+                                            subcategory={news.subcategory || 'Tech'}
                                             summary={news.summary || news.description || 'No summary available'}
                                             source_id={news.source_id || 'unknown'}
                                             source_name={news.source_name || 'Unknown Source'}
@@ -330,9 +334,8 @@ export default function CategoryNews() {
                         )}
 
                         {/* More News Section */}
-                        {newsList.length > 20 && (
+                        {newsList.length > 21 && (
                             <section className="more-news-section">
-                                <h2 className="section-title">More {displayName} Stories</h2>
                                 <div className="more-news-grid">
                                     {newsList.slice(20).map((news, idx) => (
                                         <NewsCard
@@ -342,6 +345,7 @@ export default function CategoryNews() {
                                             image={news.image || news.urlToImage || null}
                                             date={news.date || news.published_at || new Date().toISOString()}
                                             category={news.category || categoryName}
+                                            subcategory={news.subcategory || 'Tech'}
                                             summary={news.summary || news.description || 'No summary available'}
                                             source_id={news.source_id || 'unknown'}
                                             source_name={news.source_name || 'Unknown Source'}

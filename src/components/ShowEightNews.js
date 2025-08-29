@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ModernNewsCard from './news_cards/ModernNewsCard';
 import config from '../config/config';
 import '../modern-theme.css';
-export default function ShowThreeNews({ category }) {
+export default function ShowEightNews({ category }) {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,37 +20,37 @@ export default function ShowThreeNews({ category }) {
         console.log(`Fetching news for tech subcategory: ${category}`);
 
         // First try subcategory-specific tech news
-        let endpoint = `${config.api.base}/api/news/subcategory/${encodeURIComponent(category)}?limit=6`;
-        console.log('ShowSixNews - Subcategory endpoint:', endpoint);
+        let endpoint = `${config.api.base}/api/news/subcategory/${encodeURIComponent(category)}?limit=8`;
+        
 
         let response = await fetch(endpoint);
-        console.log('ShowSixNews - Subcategory response status:', response.status);
+      
 
         if (response.ok) {
           const data = await response.json();
-          console.log(`ShowSixNews - ${category} subcategory data:`, data);
+          
 
           // Extract news array from subcategory response
           const newsArray = data.news || [];
           if (newsArray.length > 0) {
-            setNewsList(newsArray.slice(0, 6));
+            setNewsList(newsArray);
             setLoading(false);
             return;
           }
         }
 
         // Fallback to Tech category with subcategory filter
-        endpoint = `${config.api.base}/api/news/category/Tech?subcategory=${encodeURIComponent(category)}&limit=6`;
-        console.log('ShowSixNews - Category fallback endpoint:', endpoint);
+        endpoint = `${config.api.base}/api/news/category/Tech?subcategory=${encodeURIComponent(category)}&limit=8`;
+        
 
         response = await fetch(endpoint);
         if (response.ok) {
           const data = await response.json();
-          console.log('ShowSixNews - Category fallback data:', data);
+          
 
           const newsArray = data.news || [];
           if (newsArray.length > 0) {
-            setNewsList(newsArray.slice(0, 6));
+            setNewsList(newsArray);
           } else {
             console.log(`No tech news found for subcategory: ${category}`);
             setNewsList([]);
@@ -90,6 +90,7 @@ export default function ShowThreeNews({ category }) {
             image={getImageSource(news)}
             date={news.date}
             category={news.category}
+            subcategory={news.subcategory}            
             summary={news.summary}
             source_id={news.source_id}
             source_name={news.source_name}

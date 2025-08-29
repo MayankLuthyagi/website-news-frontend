@@ -18,7 +18,7 @@ function formatRelativeDate(dateString) {
     return dateObj.toLocaleDateString();
 }
 
-function CompactCard({ id, title, summary, url, date, source_id, source_name, category, image }) {
+function CompactCard({ id, title, summary, url, date, source_id, source_name, category, subcategory, image }) {
     const navigate = useNavigate();
     const [sourceName, setSourceName] = useState(source_name || 'Unknown Source');
 
@@ -44,6 +44,7 @@ function CompactCard({ id, title, summary, url, date, source_id, source_name, ca
             source_id,
             source_name: sourceName,
             category,
+            subcategory,
             image
         };
 

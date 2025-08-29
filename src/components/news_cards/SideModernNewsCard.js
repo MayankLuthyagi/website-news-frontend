@@ -31,6 +31,7 @@ function SideModernNewsCard({
     source_id,
     source_name,
     category,
+    subcategory,
     image,
     variant = 'default' // 'default', 'featured', 'compact', 'hero'
 }) {
@@ -61,6 +62,7 @@ function SideModernNewsCard({
             source_id,
             source_name: sourceName,
             category,
+            subcategory,
             image: imageUrl
         };
 
@@ -117,10 +119,9 @@ function SideModernNewsCard({
         }
     };
 
-    const estimatedReadTime = Math.max(1, Math.ceil((summary?.length || 200) / 200));
-    const trimTitle = (str) => {
+    const trimTitle = (str, val) => {
         if (!str || str=='') return 'Briefli Special...';
-        const trimmed = str.length > 15 ? str.substring(0, 15) + '...' : str;
+        const trimmed = str.length > val ? str.substring(0, val) + '...' : str;
         return trimmed;
     }
     
@@ -143,9 +144,9 @@ function SideModernNewsCard({
                     <div className="card-image-overlay">
                         <span
                             className="card-category"
-                            style={{ backgroundColor: getCategoryColor(category) }}
+                            style={{ backgroundColor: getCategoryColor(subcategory) }}
                         >
-                            {category}
+                            {subcategory}
                         </span>
                     </div>
                 </div>
@@ -161,31 +162,17 @@ function SideModernNewsCard({
                     </span>
                 )}
 
-                <h3 className="card-title">{trimTitle(title)}</h3>
-
-                {summary && variant !== 'compact' && (
-                    <p className="card-summary">{summary}</p>
-                )}
+                <h3 className="card-title">{trimTitle(title, 35)}</h3>
 
                 <div className="card-meta">
                     <div className="card-meta-left">
-                        <span className="card-source">{sourceName}</span>
-                        <span className="card-date">
+                        <span className="card-source">{trimTitle(sourceName, 7)}</span>
+                        <span className="card-date ">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                                <polyline points="12,6 12,12 16,14" stroke="currentColor" strokeWidth="2" />
+                                <polyline    points="12,6 12,12 16,14" stroke="currentColor" strokeWidth="2" />
                             </svg>
                             {formatRelativeDate(date)}
-                        </span>
-                    </div>
-
-                    <div className="card-meta-right">
-                        <span className="card-read-time">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke="currentColor" strokeWidth="2" />
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke="currentColor" strokeWidth="2" />
-                            </svg>
-                            {estimatedReadTime} min read
                         </span>
                     </div>
                 </div>

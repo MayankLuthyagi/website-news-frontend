@@ -7,27 +7,26 @@ function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleDropdownMouseEnter = () => {
-    setIsDropdownOpen(true);
-  };
-
-  const handleDropdownMouseLeave = () => {
-    setIsDropdownOpen(false);
-  };
-
+  // Toggles the main mobile menu (hamburger)
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Prevent default behavior for dropdown button
+  // Toggles the category dropdown
   const handleDropdownClick = (e) => {
     e.preventDefault();
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  // Closes all menus; used for mobile navigation
+  const closeAllMenus = () => {
+    setIsMobileMenuOpen(false);
+    setIsDropdownOpen(false);
+  };
+
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-logo">
+      <Link to="/" className="navbar-logo" onClick={closeAllMenus}>
         <span className="logo-text">Tech Brief</span>
         <span className="logo-accent">Daily</span>
       </Link>
@@ -38,14 +37,14 @@ function Navbar() {
         <span></span>
       </div>
 
-      <ul className={`navbar-links ${isMobileMenuOpen ? 'show' : ''}`}>
+      <ul
+        className={`navbar-links ${isMobileMenuOpen ? 'show' : ''}`}
+        onClick={closeAllMenus}
+      >
         <li><Link to="/latest-news" className="nav-link">Latest Tech</Link></li>
         <li><Link to="/category/tech" className="nav-link">All Tech News</Link></li>
-        <li
-          className={`dropdown ${isDropdownOpen ? 'dropdown-open' : ''}`}
-          onMouseEnter={handleDropdownMouseEnter}
-          onMouseLeave={handleDropdownMouseLeave}
-        >
+
+        <li className={`dropdown ${isDropdownOpen ? 'dropdown-open' : ''}`}>
           <button
             className="dropbtn nav-link"
             onClick={handleDropdownClick}

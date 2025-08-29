@@ -117,18 +117,6 @@ function Footer() {
             </div>
           </div>
         </div>
-
-        {/* Footer Bottom */}
-        <div className="footer-bottom">
-          <div className="footer-bottom-content">
-            <div className="footer-copyright">
-              <p>&copy; {currentYear} Tech Brief Daily. Powered by innovation.</p>
-            </div>
-            <div className="footer-tech-badge">
-              <span>Built with ⚡ React & Modern Web Technologies</span>
-            </div>
-          </div>
-        </div>
       </div>
     </footer>
   );

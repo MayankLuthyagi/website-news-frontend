@@ -38,7 +38,7 @@ export const ThemeProvider = ({ children }) => {
             root.style.setProperty('--bg-tertiary', '#1a1a2e');
             root.style.setProperty('--text-primary', '#ffffff');
             root.style.setProperty('--text-secondary', '#e0e0e0');
-            root.style.setProperty('--text-muted', '#a0a0a0');
+            root.style.setProperty('--text-muted', '#ffffff');
             root.style.setProperty('--accent-primary', '#00bcd4');
             root.style.setProperty('--accent-secondary', '#00ff99');
             root.style.setProperty('--accent-tertiary', '#8a2be2');

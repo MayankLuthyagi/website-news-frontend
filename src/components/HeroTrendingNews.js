@@ -12,7 +12,7 @@ export default function HeroTrendingNews() {
         const fetchTrendingNews = async () => {
             try {
                 // Try Tech trending news first
-                const endpoint = `${config.api.base}/api/news/fourTrending?category=Tech&limit=4`;
+                const endpoint = `${config.api.base}/api/news/getTrendingNews?category=Tech&limit=4`;
                 console.log('HeroTrendingNews - Tech endpoint:', endpoint);
 
                 const response = await fetch(endpoint);

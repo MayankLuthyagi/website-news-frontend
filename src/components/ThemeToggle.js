@@ -4,10 +4,19 @@ import { useTheme } from '../contexts/ThemeContext';
 const ThemeToggle = () => {
     const { isDarkMode, toggleTheme } = useTheme();
 
+    // 1. CREATE a new handler function
+    const handleClick = (e) => {
+        // This stops the click from "bubbling up" and closing the mobile menu
+        e.stopPropagation(); 
+        // This performs the original theme toggle action
+        toggleTheme();
+    };
+
     return (
         <button
             className="theme-toggle"
-            onClick={toggleTheme}
+            // 2. USE the new handler here
+            onClick={handleClick}
             aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
             title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
         >

@@ -31,6 +31,7 @@ function ModernNewsCard({
     source_id,
     source_name,
     category,
+    subcategory,
     image,
     variant = 'default' // 'default', 'featured', 'compact', 'hero'
 }) {
@@ -61,6 +62,7 @@ function ModernNewsCard({
             source_id,
             source_name: sourceName,
             category,
+            subcategory,
             image: imageUrl
         };
 
@@ -118,7 +120,11 @@ function ModernNewsCard({
     };
 
     const estimatedReadTime = Math.max(1, Math.ceil((summary?.length || 200) / 200));
-
+    const trimTitle = (str, val) => {
+        if (!str || str=='') return 'Briefli Special...';
+        const trimmed = str.length > val ? str.substring(0, val) + '...' : str;
+        return trimmed;
+    }
     return (
         <article
             className={getVariantClass()}
@@ -137,9 +143,9 @@ function ModernNewsCard({
                     <div className="card-image-overlay">
                         <span
                             className="card-category"
-                            style={{ backgroundColor: getCategoryColor(category) }}
+                            style={{ backgroundColor: getCategoryColor(subcategory) }}
                         >
-                            {category}
+                            {subcategory}
                         </span>
                     </div>
                 </div>
@@ -149,7 +155,7 @@ function ModernNewsCard({
                 {!imageUrl && (
                     <span
                         className="card-category card-category-no-image"
-                        style={{ backgroundColor: getCategoryColor(category) }}
+                        style={{ backgroundColor: getCategoryColor(subcategory) }}
                     >
                         {category}
                     </span>
@@ -163,7 +169,7 @@ function ModernNewsCard({
 
                 <div className="card-meta">
                     <div className="card-meta-left">
-                        <span className="card-source">{sourceName}</span>
+                        <span className="card-source">{trimTitle(sourceName, 15)}</span>
                         <span className="card-date">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />

@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import NewsCard from '../components/news_cards/NewsCard';
-import FeaturedCard from '../components/news_cards/FeaturedCard';
-import CompactCard from '../components/news_cards/CompactCard';
-import FullImageCard from '../components/news_cards/FullImageCard';
-import SideImageCard from '../components/news_cards/SideImageCard';
+import ModernNewsCard from '../components/news_cards/ModernNewsCard';
+import SideModernNewsCard from '../components/news_cards/SideModernNewsCard';
 import '../index.css';
+import '../modern-theme.css';
 import { Helmet } from 'react-helmet-async';
+import { useTheme } from '../contexts/ThemeContext';
 import config from '../config/config';
+
 export default function AllLatestNews() {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
         // Fetch Tech latest news using correct API structure
-        const endpoint = `${config.api.base}/api/news/latest?category=Tech`;
+        const endpoint = `${config.api.base}/api/news/getLatestNews?category=Tech&limit=1000`;
         console.log('AllLatestNews - Tech endpoint:', endpoint);
 
         const response = await fetch(endpoint);
@@ -68,10 +69,18 @@ export default function AllLatestNews() {
     fetchNews();
   }, []);
 
+  // Calculate the midpoint to divide the news list equally
+  const midpoint = Math.ceil(newsList.length / 5);
+  const getImageSource = (news) => {
+    if (news.image && news.image.trim() !== "") {
+      return news.image;
+    }
+    return "/images/Tech.png"; // fallback image
+  };
   return (
     <>
       <Helmet>
-        <title>All Latest Tech News - Tech Brief Daily</title>
+        <title>Latest Tech News - Tech Brief Daily</title>
         <meta name="description" content="Stay updated with all the latest technology news. Get breaking tech news, trending stories, and in-depth coverage on AI, startups, gadgets, and innovation." />
         <meta name="keywords" content="latest tech news, breaking tech news, technology, AI, startups, gadgets, software, innovation, programming" />
 
@@ -79,7 +88,7 @@ export default function AllLatestNews() {
         <meta property="og:title" content="All Latest Tech News - Tech Brief Daily" />
         <meta property="og:description" content="Stay updated with all the latest technology news. Get breaking tech news, trending stories, and in-depth coverage." />
         <meta property="og:image" content={`${config.api.base}/images/tech-og-image.jpg`} />
-        <meta property="og:url" content={`${config.api.base}/latest-news`} />
+        <meta property="og:url" content={`${config.api.base}/getLatestNews`} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Tech Brief Daily" />
 
@@ -92,131 +101,81 @@ export default function AllLatestNews() {
         {/* Additional SEO */}
         <meta name="robots" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="canonical" href={`${config.api.base}/latest-news`} />
+        <link rel="canonical" href={`${config.api.base}/getLatestNews`} />
       </Helmet>
-      <div className="all-news-container">
-        <div className="all-news-header">
-          <h1>All Latest Tech News</h1>
-          <p>Stay updated with comprehensive technology news coverage from multiple sources</p>
-        </div>
+      <div className="modern-home-container">
+        {/* Brand Header Section */}
+        <section className="brand-header">
+          <div className="brand-container">
+            <h1 className="main-brand-title">
+              <span className="other-heading">Latest News</span>
+            </h1>
+          </div>
+        </section>
 
         {loading ? (
-          <div className="loading-section">
-            <p>Loading news...</p>
+          <div className="loading-section modern-loading">
+            <div className="loading-spinner"></div>
+            <p>Loading latest tech news...</p>
           </div>
         ) : newsList.length > 0 ? (
-          <>
-            {/* Featured News Section */}
-            <section className="featured-news-section">
-              <h2 className="section-title">Featured Tech Stories</h2>
-              <div className="featured-news-grid">
-                {newsList.slice(0, 3).map((news, idx) => (
-                  <FeaturedCard
-                    key={`featured-${idx}`}
-                    id={news.id}
-                    title={news.title}
-                    image={news.image}
-                    date={news.date}
-                    category={news.category}
-                    summary={news.summary}
-                    source_id={news.source_id}
-                    source_name={news.source_name}
-                    url={news.link}
-                  />
-                ))}
-              </div>
-            </section>
+          <main className="news-grid-layout">
+            <div className="grid-container">
+              {/* Featured News Section - First Half */}
+              <section className="news-section featured-section">
+                <div className="modern-grid featured-grid">
+                  {newsList.slice(0, midpoint).map((news, idx) => (
+                    <ModernNewsCard
+                      key={`featured-${idx}`}
+                      id={news.id}
+                      title={news.title}
+                      image={getImageSource(news)}
+                      date={news.date}
+                      category={news.category}
+                      subcategory={news.subcategory}
+                      summary={news.summary}
+                      source_id={news.source_id}
+                      source_name={news.source_name}
+                      url={news.link}
+                      variant="featured"
+                    />
+                  ))}
+                </div>
+              </section>
 
-            {/* Breaking News Section */}
-            <section className="breaking-news-section">
-              <h2 className="section-title">Breaking Tech News</h2>
-              <div className="breaking-news-grid">
-                {newsList.slice(3, 9).map((news, idx) => (
-                  <CompactCard
-                    key={`breaking-${idx}`}
-                    id={news.id}
-                    title={news.title}
-                    image={news.image}
-                    date={news.date}
-                    category={news.category}
-                    summary={news.summary}
-                    source_id={news.source_id}
-                    source_name={news.source_name}
-                    url={news.link}
-                  />
-                ))}
-              </div>
-            </section>
-
-            {/* Full Image Stories Section */}
-            <section className="full-image-section">
-              <h2 className="section-title">Tech In Focus</h2>
-              <div className="full-image-grid">
-                {newsList.slice(9, 12).map((news, idx) => (
-                  <FullImageCard
-                    key={`focus-${idx}`}
-                    id={news.id}
-                    title={news.title}
-                    image={news.image}
-                    date={news.date}
-                    category={news.category}
-                    summary={news.summary}
-                    source_id={news.source_id}
-                    source_name={news.source_name}
-                    url={news.link}
-                  />
-                ))}
-              </div>
-            </section>
-
-            {/* Quick Reads Section */}
-            <section className="quick-reads-section">
-              <h2 className="section-title">Quick Reads</h2>
-              <div className="quick-reads-grid">
-                {newsList.slice(12, 20).map((news, idx) => (
-                  <SideImageCard
-                    key={`quick-${idx}`}
-                    id={news.id}
-                    title={news.title}
-                    image={news.image}
-                    date={news.date}
-                    category={news.category}
-                    summary={news.summary}
-                    source_id={news.source_id}
-                    source_name={news.source_name}
-                    url={news.link}
-                  />
-                ))}
-              </div>
-            </section>
-
-            {/* More News Section */}
-            <section className="more-news-section">
-              <h2 className="section-title">More Stories</h2>
-              <div className="more-news-grid">
-                {newsList.slice(20).map((news, idx) => (
-                  <NewsCard
-                    key={`more-${idx}`}
-                    id={news.id}
-                    title={news.title}
-                    image={news.image}
-                    date={news.date}
-                    category={news.category}
-                    summary={news.summary}
-                    source_id={news.source_id}
-                    source_name={news.source_name}
-                    url={news.link}
-                  />
-                ))}
-              </div>
-            </section>
-          </>
+              {/* Breaking News Section - Second Half */}
+              <section className="news-section breaking-section">
+                <div className="modern-grid compact-grid">
+                  {newsList.slice(midpoint).map((news, idx) => (
+                    <SideModernNewsCard
+                      key={`breaking-${idx}`}
+                      id={news.id}
+                      title={news.title}
+                      image={getImageSource(news)}
+                      date={news.date}
+                      category={news.category}
+                      subcategory={news.subcategory}
+                      summary={news.summary}
+                      source_id={news.source_id}
+                      source_name={news.source_name}
+                      url={news.link}
+                      variant="compact"
+                    />
+                  ))}
+                </div>
+              </section>
+            </div>
+          </main>
         ) : (
-          <div className="no-news-section">
-            <div className="no-news-message">
-              <h3>No Tech News Available</h3>
-              <p>We're currently updating our technology news database.</p>
-              <p>Please check back soon for the latest tech updates and innovations.</p>
+          <div className="empty-state-section">
+            <div className="empty-state-container">
+              <div className="empty-state-icon">📰</div>
+              <h3 className="empty-state-title">No Tech News Available</h3>
+              <p className="empty-state-description">
+                We're currently updating our technology news database.
+                <br />
+                Please check back soon for the latest tech updates and innovations.
+              </p>
             </div>
           </div>
         )}

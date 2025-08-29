@@ -12,7 +12,7 @@ export default function NewsTicker() {
         const fetchTickerNews = async () => {
             try {
                 // Fetch latest 5 news articles for the ticker
-                const response = await fetch(`${config.api.base}${config.api.news}/latestFive?category=Tech`);
+                const response = await fetch(`${config.api.base}${config.api.news}/getTrendingNews?category=Tech&limit=5`);
 
                 if (!response.ok) {
                     // Try alternative endpoint

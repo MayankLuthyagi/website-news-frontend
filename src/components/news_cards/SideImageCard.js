@@ -18,7 +18,7 @@ function formatRelativeDate(dateString) {
     return dateObj.toLocaleDateString();
 }
 
-function SideImageCard({ id, title, summary, url, date, source_id, source_name, category, image }) {
+function SideImageCard({ id, title, summary, url, date, source_id, source_name, category, subcategory, image }) {
     const navigate = useNavigate();
     const [sourceName, setSourceName] = useState(source_name || 'Unknown Source');
     const [imageUrl, setImageUrl] = useState(image || null);
@@ -46,6 +46,7 @@ function SideImageCard({ id, title, summary, url, date, source_id, source_name, 
             source_id,
             source_name: sourceName,
             category,
+            subcategory,
             image
         };
 

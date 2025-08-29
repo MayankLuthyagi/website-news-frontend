@@ -1,40 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import ModernNewsCard from './news_cards/ModernNewsCard';
+import SideModernNewsCard from './news_cards/SideModernNewsCard';
 import config from '../config/config';
 import '../modern-theme.css';
-export default function LatestNews({ title, type }) {
+export default function ShowTodayNews({ category }) {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        // First try the specific endpoint
-        const response = await fetch(`${config.api.base}${config.api.news}/${type}?category=Tech`);
+        // Try Tech trending news first
+        const endpoint = `${config.api.base}/api/news/getTodayNews?category=Tech&limit=40`;
+        console.log('ShowTrendingNews - Tech endpoint:', endpoint);
+
+        const response = await fetch(endpoint);
+        console.log('Show TrendingNews - Response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('LatestNews - Tech data:', data);
+        console.log('ShowFourTrendingNews - Tech data:', data);
 
-        // If data is an array and has items, use it
+        // Check if we have actual data
         if (Array.isArray(data) && data.length > 0) {
           setNewsList(data);
         } else {
-          // Try the category endpoint as secondary option
-          const categoryResponse = await fetch(`${config.api.base}/api/news/category/Tech?limit=5`);
+          // Try category endpoint as secondary option
+          const categoryResponse = await fetch(`${config.api.base}/api/news/getTrendingNews?category=Tech&limit=40`);
           if (categoryResponse.ok) {
             const categoryData = await categoryResponse.json();
-            console.log('LatestNews - Category data:', categoryData);
+            console.log('ShowFourTrendingNews - Category data:', categoryData);
 
             // Check if we have actual tech news
             if (categoryData.news && categoryData.news.length > 0) {
-              setNewsList(categoryData.news.slice(0, 5));
+              setNewsList(categoryData.news);
             } else {
-              // No tech news available - show empty array
-              console.log('No tech news found in database');
+              console.log('No tech trending news found in database');
               setNewsList([]);
             }
           } else {
@@ -42,7 +45,7 @@ export default function LatestNews({ title, type }) {
           }
         }
       } catch (error) {
-        console.error('Error fetching tech news:', error);
+        console.error('Error fetching trending tech news:', error);
         // Don't fallback to other categories - just show empty
         setNewsList([]);
       } finally {
@@ -51,41 +54,44 @@ export default function LatestNews({ title, type }) {
     };
 
     fetchNews();
-  }, [type]);
-      const getImageSource = (news) => {
+  }, [category]); // <-- add category here
+
+    const getImageSource = (news) => {
       if (news.image && news.image.trim() !== "") {
         return news.image;
       }
       return "/images/Tech.png"; // fallback image
     };
   return (
-    <div>
+    <>
+
       <div className="news-grid">
         {loading ? (
           <p>Loading news...</p>
         ) : newsList.length > 0 ? (
           newsList.map((news, idx) => (
-            <ModernNewsCard
+            <SideModernNewsCard
               key={news.id || idx}
               id={news.id}
               title={news.title}
               image={getImageSource(news)}
               date={news.date}
               category={news.category}
+              subcategory={news.subcategory}
               summary={news.summary}
               source_id={news.source_id}
               source_name={news.source_name}
               url={news.link}
-              variant={idx === 0 ? 'featured' : 'default'}
+              variant="compact"
             />
           ))
         ) : (
           <div className="no-news-message">
-            <p>No Tech news available at the moment.</p>
-            <p>Please check back later for the latest technology updates.</p>
+            <p>No trending Tech news available at the moment.</p>
+            <p>Check back soon for the latest technology trends.</p>
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
