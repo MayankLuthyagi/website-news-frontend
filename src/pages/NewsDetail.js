@@ -302,7 +302,41 @@ function NewsDetail() {
                         <h1 className="news-detail-title">{newsData.title}</h1>
 
                         <div className="news-detail-content">
-                            <p className="news-detail-summary">{newsData.summary}</p>
+                            {/* Debug: Log html_content */}
+                            {console.log('Raw html_content:', newsData.html_content)}
+                            {console.log('html_content type:', typeof newsData.html_content)}
+                            {console.log('html_content length:', newsData.html_content?.length)}
+
+                            {(() => {
+                                // Process the html_content to handle escaped characters
+                                let processedHtmlContent = newsData.html_content;
+
+                                if (processedHtmlContent && typeof processedHtmlContent === 'string') {
+                                    // Unescape HTML entities like \u003C to < and \u003E to >
+                                    processedHtmlContent = processedHtmlContent
+                                        .replace(/\\u003C/g, '<')
+                                        .replace(/\\u003E/g, '>')
+                                        .replace(/\\"/g, '"')
+                                        .replace(/\\n/g, '\n');
+
+                                    console.log('Processed html_content:', processedHtmlContent);
+
+                                    return (
+                                        <div
+                                            className="news-detail-summary"
+                                            dangerouslySetInnerHTML={{ __html: processedHtmlContent }}
+                                        />
+                                    );
+                                }
+
+                                // Fallback to summary if no html_content
+                                return (
+                                    <div className="news-detail-summary">
+                                        <p>No HTML content available. Using summary instead:</p>
+                                        <p>{newsData.summary}</p>
+                                    </div>
+                                );
+                            })()}
 
                             <div className="news-detail-actions">
                                 <a
