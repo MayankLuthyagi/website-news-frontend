@@ -17,7 +17,6 @@ export default function ShowEightNews({ category }) {
       setLoading(true);
       setError(null);
       try {
-        console.log(`Fetching news for tech subcategory: ${category}`);
 
         // First try subcategory-specific tech news
         let endpoint = `${config.api.base}/api/news/subcategory/${encodeURIComponent(category)}?limit=8`;
@@ -52,11 +51,9 @@ export default function ShowEightNews({ category }) {
           if (newsArray.length > 0) {
             setNewsList(newsArray);
           } else {
-            console.log(`No tech news found for subcategory: ${category}`);
             setNewsList([]);
           }
         } else {
-          console.log('Category fallback also failed');
           setNewsList([]);
         }
 

@@ -11,33 +11,28 @@ export default function ShowTodayNews({ category }) {
       try {
         // Try Tech trending news first
         const endpoint = `${config.api.base}/api/news/getTodayNews?category=Tech&limit=40`;
-        console.log('ShowTrendingNews - Tech endpoint:', endpoint);
 
         const response = await fetch(endpoint);
-        console.log('Show TrendingNews - Response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('ShowFourTrendingNews - Tech data:', data);
 
         // Check if we have actual data
         if (Array.isArray(data) && data.length > 0) {
           setNewsList(data);
         } else {
           // Try category endpoint as secondary option
-          const categoryResponse = await fetch(`${config.api.base}/api/news/getTrendingNews?category=Tech&limit=40`);
+          const categoryResponse = await fetch(`${config.api.base}/api/news/category/Tech?limit=40`);
           if (categoryResponse.ok) {
             const categoryData = await categoryResponse.json();
-            console.log('ShowFourTrendingNews - Category data:', categoryData);
 
             // Check if we have actual tech news
             if (categoryData.news && categoryData.news.length > 0) {
               setNewsList(categoryData.news);
             } else {
-              console.log('No tech trending news found in database');
               setNewsList([]);
             }
           } else {

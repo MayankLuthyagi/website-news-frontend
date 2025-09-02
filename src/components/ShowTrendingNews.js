@@ -17,9 +17,6 @@ export default function TrendingNews({ title, type }) {
         }
 
         const data = await response.json();
-        console.log('LatestNews - Tech data:', data);
-        console.log('Sample item structure:', data[0]);
-        console.log('Sample item ID field:', data[0]?.id || data[0]?._id);
 
         // If data is an array and has items, use it
         if (Array.isArray(data) && data.length > 0) {
@@ -29,14 +26,11 @@ export default function TrendingNews({ title, type }) {
           const categoryResponse = await fetch(`${config.api.base}/api/news/category/Tech?limit=10 `);
           if (categoryResponse.ok) {
             const categoryData = await categoryResponse.json();
-            console.log('LatestNews - Category data:', categoryData);
 
             // Check if we have actual tech news
             if (categoryData.news && categoryData.news.length > 0) {
               setNewsList(categoryData.news);
             } else {
-              // No tech news available - show empty array
-              console.log('No tech news found in database');
               setNewsList([]);
             }
           } else {
