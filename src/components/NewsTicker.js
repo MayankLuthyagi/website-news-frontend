@@ -73,7 +73,11 @@ export default function NewsTicker() {
         // Navigate to news detail page using title-based route
         navigate(`/news/${urlFriendlyTitle}`, {
             state: {
-                newsData: newsItem
+                newsData: {
+                    ...newsItem,
+                    // Flag to indicate this data needs to be fetched for complete content
+                    needsFullFetch: true
+                }
             }
         });
     };

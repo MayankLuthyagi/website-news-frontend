@@ -35,55 +35,97 @@ function NewsDetail() {
     // Function to fetch news by ID
     const fetchNewsById = async (id) => {
         try {
-            const response = await fetch(`${config.api.base}${config.api.news}/${id}`);
-            if (response.ok) {
-                const fetchedNewsData = await response.json();
+            console.log('=== FETCHING BY ID ===', id);
+
+            // Try multiple possible endpoints for fetching the complete news article
+            const possibleEndpoints = [
+                `${config.api.base}${config.api.news}/${id}`,
+                `${config.api.base}/api/news/${id}`,
+                `${config.api.base}${config.api.allNews}/${id}`
+            ];
+
+            let fetchedNewsData = null;
+
+            for (const endpoint of possibleEndpoints) {
+                try {
+                    console.log('Trying endpoint:', endpoint);
+                    const response = await fetch(endpoint);
+                    if (response.ok) {
+                        fetchedNewsData = await response.json();
+                        console.log('Success with endpoint:', endpoint);
+                        break;
+                    } else {
+                        console.log('Failed with endpoint:', endpoint, 'Status:', response.status);
+                    }
+                } catch (endpointError) {
+                    console.log('Error with endpoint:', endpoint, endpointError.message);
+                }
+            }
+
+            if (fetchedNewsData) {
+                console.log('Raw fetched data:', fetchedNewsData);
+                console.log('Fetched has html_content:', !!fetchedNewsData.html_content);
+                console.log('html_content type:', typeof fetchedNewsData.html_content);
+                console.log('html_content length:', fetchedNewsData.html_content?.length);
+                console.log('html_content first 100 chars:', fetchedNewsData.html_content?.substring(0, 100));
+
                 setNewsData(fetchedNewsData);
-                console.log('Fetched news by ID:', fetchedNewsData);
             } else {
-                console.error('Failed to fetch news by ID:', response.status);
-                // You might want to show an error message or redirect
+                console.error('All endpoints failed to fetch news by ID:', id);
+                // If fetch by ID fails but we have initial data, use that
+                if (initialNewsData) {
+                    console.log('Falling back to initial data');
+                    setNewsData(initialNewsData);
+                }
             }
         } catch (error) {
             console.error('Error fetching news by ID:', error);
-            // You might want to show an error message or redirect
+            // If fetch by ID fails but we have initial data, use that
+            if (initialNewsData) {
+                console.log('Falling back to initial data due to error');
+                setNewsData(initialNewsData);
+            }
         } finally {
             setNewsLoading(false);
         }
     };
 
-    // If no newsData from navigation state, we might need to handle this case
-    // For now, let's just log it for debugging
     if (!newsData && urlTitle) {
         // Remove console.warn in production
-        // console.warn('No newsData found in location state for URL title:', urlTitle);
+        console.warn('No newsData found in location state for URL title:', urlTitle);
     }
 
     useEffect(() => {
         // Scroll to top when component mounts or when navigation occurs
         window.scrollTo(0, 0);
-
-        // Reset loading state and related news when navigation occurs
         setLoading(true);
         setRelatedNews([]);
 
+        console.log('=== NEWSDETAIL NAVIGATION ===');
+        console.log('initialNewsData:', initialNewsData);
+        console.log('has html_content:', !!initialNewsData?.html_content);
+        console.log('needsFullFetch flag:', initialNewsData?.needsFullFetch);
+
+        // Always fetch complete data if coming from a component that doesn't have html_content
+        if (initialNewsData && (initialNewsData.needsFullFetch || !initialNewsData.html_content) && (initialNewsData.id || initialNewsData._id)) {
+            console.log('Fetching complete data due to needsFullFetch flag or missing html_content...');
+            setNewsLoading(true);
+            fetchNewsById(initialNewsData.id || initialNewsData._id);
+        }
         // If no newsData and we have a newsId, fetch the news by ID
-        if (!initialNewsData && newsId) {
+        else if (!initialNewsData && newsId) {
+            console.log('No initial data, fetching by newsId...');
             setNewsLoading(true);
             fetchNewsById(newsId);
-        } else if (initialNewsData) {
+        } else if (initialNewsData && initialNewsData.html_content) {
+            console.log('Using complete initialNewsData with html_content');
+            setNewsData(initialNewsData);
+            setNewsLoading(false);
+        } else {
+            console.log('Using initialNewsData without html_content (fallback)');
             setNewsData(initialNewsData);
             setNewsLoading(false);
         }
-
-        // Remove console logging in production
-        // console.log('NewsDetail useEffect triggered:', {
-        //     urlTitle,
-        //     hasNewsData: !!newsData,
-        //     newsDataTitle: newsData?.title,
-        //     pathname: location.pathname
-        // });
-
     }, [newsId, initialNewsData, urlTitle, location.pathname]);
 
     // Separate useEffect for handling newsData-dependent operations

@@ -43,6 +43,9 @@ function ModernNewsCard({
     const handleCardClick = (e) => {
         e.preventDefault();
 
+        console.log('ModernNewsCard click - ID:', id);
+        console.log('ModernNewsCard click - title:', title);
+
         // Create URL-friendly title with dashes
         const urlFriendlyTitle = title.toLowerCase()
             .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
@@ -63,8 +66,12 @@ function ModernNewsCard({
             source_name: sourceName,
             category,
             subcategory,
-            image: imageUrl
+            image: imageUrl,
+            // Flag to indicate this data needs to be fetched for complete content
+            needsFullFetch: true
         };
+
+        console.log('ModernNewsCard - passing newsData:', newsData);
 
         // Navigate to news detail page using title-based route
         navigate(`/news/${urlFriendlyTitle}`, {
@@ -121,7 +128,7 @@ function ModernNewsCard({
 
     const estimatedReadTime = Math.max(1, Math.ceil((summary?.length || 200) / 200));
     const trimTitle = (str, val) => {
-        if (!str || str=='') return 'Briefli Special...';
+        if (!str || str == '') return 'Briefli Special...';
         const trimmed = str.length > val ? str.substring(0, val) + '...' : str;
         return trimmed;
     }
