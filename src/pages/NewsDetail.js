@@ -374,7 +374,6 @@ function NewsDetail() {
                                 // Fallback to summary if no html_content
                                 return (
                                     <div className="news-detail-summary">
-                                        <p>No HTML content available. Using summary instead:</p>
                                         <p>{newsData.summary}</p>
                                     </div>
                                 );
