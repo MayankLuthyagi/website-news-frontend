@@ -1563,6 +1563,33 @@ a:not(.nav-link):not(.navbar-logo):not(.footer-link):not(.social-icon):hover {
     }
 }
 
+@media (max-width: 900px) {
+  .footer-logo{
+    display: flex;
+    justify-content: center;
+  }
+  .footer-section h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+    text-align: center; /* centers the text */
+    position: relative;
+  }
+
+  .footer-section h4::after {
+    display: flex;
+    text-align: center; /* centers the text */
+    justify-content: center;
+    align-items: center;
+    content: "";
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(120deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 1px;
+  }
+
+}
 /* Modern Footer */
 .modern-footer {
     background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
@@ -1657,25 +1684,25 @@ a:not(.nav-link):not(.navbar-logo):not(.footer-link):not(.social-icon):hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
-
 .footer-section h4 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-lg);
-    position: relative;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  text-align: center; /* centers text */
+  position: relative;
 }
 
 .footer-section h4::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 30px;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-    border-radius: 1px;
+  content: '';
+  display: block; /* block instead of flex */
+  width: 80px;
+  height: 2px;
+  margin: 0.5rem auto 0; /* centers the line */
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 1px;
 }
+
 
 .footer-links {
     list-style: none;
@@ -1835,6 +1862,8 @@ a:not(.nav-link):not(.navbar-logo):not(.footer-link):not(.social-icon):hover {
 
 @media (max-width: 768px) {
     .footer-container {
+        display: flex;
+        justify-content: center;
         padding: var(--spacing-xl) var(--spacing-md);
     }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../index.css';
 import '../modern-theme.css';
+import '../index.css'
 
 function Footer() {
   const currentYear = new Date().getFullYear();

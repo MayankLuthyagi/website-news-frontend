@@ -22,9 +22,11 @@ export default function NewsManagement({ selectedCategory, allowFilter }) {
         title: '',
         original_title: '',
         summary: '',
+        html_content: '',
         link: '',
         source_id: '',
         category: '',
+        subcategory: '',
         date: '',
         image_url: '',
         count: 0,
@@ -38,50 +40,64 @@ export default function NewsManagement({ selectedCategory, allowFilter }) {
         'Entertainment', 'Health', 'Business', 'Finance', 'Education'
     ];
 
+    const subcategories = {
+        'Tech': ['AI', 'Cybersecurity', 'Quantum Computing', 'AR/VR', 'Edge Computing', '6G & IoT', 'Sustainable Tech', 'Gadgets', 'Internet', 'Gaming', 'Cloud', 'Semiconductors', 'Web3', 'Green Tech', 'EdTech', 'HealthTech', 'Autotech', 'Space Tech'],
+        'Business': ['Startups', 'Corporates', 'Markets', 'Economy', 'Industry'],
+        'Finance': ['Stock Market', 'Banking', 'Cryptocurrency', 'Personal Finance'],
+        'World': ['US', 'Europe', 'Middle East', 'Asia', 'Africa', 'Global Events'],
+        'India': ['Politics', 'Economy', 'Society', 'Culture', 'States'],
+        'Health': ['Medicine', 'Wellness', 'Mental Health', 'Research', 'Fitness'],
+        'Sports': ['Cricket', 'Football', 'Tennis', 'Olympics', 'Events'],
+        'Education': ['Schools', 'Colleges', 'Exams', 'Policy', 'EdTech'],
+        'Entertainment': ['Movies', 'TV', 'Music', 'Celebrities', 'OTT'],
+        'Politics': ['Elections', 'Government', 'Policy', 'International Relations']
+    };
+    
     useEffect(() => {
         fetchNews();
         fetchSources();
     }, [selectedCategory, allowFilter, selectedSource, localSelectedCategory, currentPage, showDisallowedOnly]);
 
-const fetchNews = async () => {
-    try {
-        setLoading(true);
-        let url = `${config.api.base}${config.api.getAllNewsAdmin}`;
-        
-        const params = new URLSearchParams();
-        const categoryToUse = localSelectedCategory || selectedCategory;
-        
-        if (categoryToUse) params.append('category', categoryToUse);
-        if (selectedSource) params.append('source', selectedSource);
-        
-        // Handle allow filter
-        if (showDisallowedOnly) {
-            params.append('allow', 'false');
-        } else if (typeof allowFilter === 'boolean') {
-            params.append('allow', allowFilter.toString());
+    const fetchNews = async () => {
+        try {
+            setLoading(true);
+            let url = `${config.api.base}${config.api.getAllNewsAdmin}`;
+            
+            const params = new URLSearchParams();
+            const categoryToUse = localSelectedCategory || selectedCategory;
+            
+            if (categoryToUse) params.append('category', categoryToUse);
+            if (selectedSource) params.append('source', selectedSource);
+            
+            // Handle allow filter
+            if (showDisallowedOnly) {
+                params.append('allow', 'false');
+            } else if (typeof allowFilter === 'boolean') {
+                params.append('allow', allowFilter.toString());
+            }
+            
+            // Pagination
+            params.append('page', currentPage.toString());
+            params.append('limit', itemsPerPage.toString());
+            
+            url += `?${params.toString()}`;
+            
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                setNews(data.data);
+                setTotalItems(data.total);
+                setTotalPages(data.totalPages);
+            } else {
+                setError('Failed to fetch news');
+            }
+        } catch (error) {
+            console.error('Error fetching news:', error);
+            setError('Failed to fetch news');
+        } finally {
+            setLoading(false);
         }
-        
-        // Pagination
-        params.append('page', currentPage.toString());
-        params.append('limit', itemsPerPage.toString());
-        
-        url += `?${params.toString()}`;
-        
-        const response = await fetch(url);
-        if (response.ok) {
-            const data = await response.json();
-            setNews(data.data);
-            setTotalItems(data.total);
-            setTotalPages(data.totalPages);
-        } else {
-            // Error handling
-        }
-    } catch (error) {
-        // Error handling
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     const fetchSources = async () => {
         try {
@@ -101,10 +117,20 @@ const fetchNews = async () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        
+        if (name === 'category') {
+            // Clear subcategory when category changes
+            setFormData(prev => ({
+                ...prev,
+                [name]: value,
+                subcategory: '' // Reset subcategory when category changes
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -124,8 +150,11 @@ const fetchNews = async () => {
                 ...formData,
                 source_id: formData.source_id ? parseInt(formData.source_id) : null,
                 count: parseInt(formData.count) || 0,
-                date: formData.date ? new Date(formData.date).toISOString() : null
+                pub_date: formData.date ? new Date(formData.date).toISOString() : null
             };
+
+            // Remove the 'date' field and use 'pub_date' instead
+            delete submitData.date;
 
             console.log('Submitting data:', submitData); // Debug log
 
@@ -211,9 +240,9 @@ const fetchNews = async () => {
 
         // Format date for datetime-local input
         let formattedPubDate = '';
-        if (newsItem.date) {
+        if (newsItem.pub_date || newsItem.date) {
             try {
-                const date = new Date(newsItem.date);
+                const date = new Date(newsItem.pub_date || newsItem.date);
                 // Format as YYYY-MM-DDTHH:MM for datetime-local input
                 formattedPubDate = date.toISOString().slice(0, 16);
             } catch (error) {
@@ -226,11 +255,13 @@ const fetchNews = async () => {
             title: newsItem.title || '',
             original_title: newsItem.original_title || '',
             summary: newsItem.summary || '',
+            html_content: newsItem.html_content || '',
             link: newsItem.link || '',
             source_id: newsItem.source_id ? newsItem.source_id.toString() : '',
             category: newsItem.category || '',
+            subcategory: newsItem.subcategory || '',
             date: formattedPubDate,
-            image_url: newsItem.image_url || '',
+            image_url: newsItem.image || '',
             count: newsItem.count || 0,
             allow: newsItem.allow !== undefined ? newsItem.allow : true
         });
@@ -314,9 +345,11 @@ const fetchNews = async () => {
             title: '',
             original_title: '',
             summary: '',
+            html_content: '',
             link: '',
             source_id: '',
             category: '',
+            subcategory: '',
             date: '',
             image_url: '',
             count: 0,
@@ -483,7 +516,7 @@ const fetchNews = async () => {
                     <span className="admin-filter-info">
                         Showing {news.length} of {totalItems} items
                         {(localSelectedCategory || selectedCategory) && <span> • Category: <strong>{localSelectedCategory || selectedCategory}</strong></span>}
-                        {typeof allowFilter === 'boolean'}
+                        {typeof allowFilter === 'boolean' && <span> • Status: <strong>{allowFilter ? 'Allowed' : 'Disallowed'}</strong></span>}
                         {selectedSource && <span> • Source: <strong>{sources.find(s => s.id.toString() === selectedSource)?.source_name}</strong></span>}
                         {showDisallowedOnly && <span> • Status: <strong>Disallowed Only</strong></span>}
                     </span>
@@ -589,6 +622,26 @@ const fetchNews = async () => {
                             </div>
 
                             <div className="admin-form-group">
+                                <label htmlFor="subcategory">Subcategory</label>
+                                <select
+                                    id="subcategory"
+                                    name="subcategory"
+                                    value={formData.subcategory}
+                                    onChange={handleInputChange}
+                                    disabled={!formData.category}
+                                >
+                                    <option value="">Select Subcategory</option>
+                                    {formData.category && subcategories[formData.category] && 
+                                        subcategories[formData.category].map(subcategory => (
+                                            <option key={subcategory} value={subcategory}>
+                                                {subcategory}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+
+                            <div className="admin-form-group">
                                 <label htmlFor="date">Publication Date</label>
                                 <input
                                     type="datetime-local"
@@ -638,9 +691,6 @@ const fetchNews = async () => {
                                     <option value="true">Allowed</option>
                                     <option value="false">Disallowed</option>
                                 </select>
-                                <small className="admin-form-help">
-                                    Set whether this news item should be displayed publicly
-                                </small>
                             </div>
                         </div>
 
@@ -654,6 +704,21 @@ const fetchNews = async () => {
                                 rows="4"
                                 placeholder="Enter news summary..."
                             />
+                        </div>
+
+                        <div className="admin-form-group admin-form-group-full">
+                            <label htmlFor="html_content">HTML Content</label>
+                            <textarea
+                                id="html_content"
+                                name="html_content"
+                                value={formData.html_content}
+                                onChange={handleInputChange}
+                                rows="6"
+                                placeholder="Enter detailed HTML content for the news article..."
+                            />
+                            <small className="admin-form-help">
+                                Optional: Rich HTML content for the full article. Will default to summary if not provided.
+                            </small>
                         </div>
 
                         <div className="admin-form-actions">
@@ -716,7 +781,7 @@ const fetchNews = async () => {
                                                 {item.allow ? 'Allowed' : 'Disallowed'}
                                             </span>
                                         </td>
-                                        <td>{item.date ? formatDate(item.date) : 'N/A'}</td>
+                                        <td>{(item.pub_date || item.date) ? formatDate(item.pub_date || item.date) : 'N/A'}</td>
                                         <td>{item.count || 0}</td>
                                         <td>
                                             <div className="admin-table-actions">

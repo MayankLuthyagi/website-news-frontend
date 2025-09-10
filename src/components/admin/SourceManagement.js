@@ -9,32 +9,18 @@ export default function SourceManagement() {
     const [formData, setFormData] = useState({
         source_name: '',
         rss_url: '',
-        category: ''
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [categories, setCategories] = useState([]);
-    const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
     const [filteredSources, setFilteredSources] = useState([]);
-
-    const sourceCategories = [
-        'World', 'India', 'Tech', 'Politics', 'Sports',
-        'Entertainment', 'Health', 'Business', 'Finance', 'Education'
-    ];
 
     useEffect(() => {
         fetchSources();
-        fetchSourceCategories();
     }, []);
 
     useEffect(() => {
-        // Filter sources based on selected category
-        if (selectedCategoryFilter) {
-            setFilteredSources(sources.filter(source => source.category === selectedCategoryFilter));
-        } else {
-            setFilteredSources(sources);
-        }
-    }, [sources, selectedCategoryFilter]);
+        setFilteredSources(sources);
+    }, [sources]);
 
     const fetchSources = async () => {
         try {
@@ -56,19 +42,7 @@ export default function SourceManagement() {
         }
     };
 
-    const fetchSourceCategories = async () => {
-        try {
-            const response = await fetch(`${config.api.base}${config.api.sources}/categories`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.categories && Array.isArray(data.categories)) {
-                    setCategories(data.categories);
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching source categories:', error);
-        }
-    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -132,7 +106,6 @@ export default function SourceManagement() {
         setFormData({
             source_name: source.source_name || '',
             rss_url: source.rss_url || '',
-            category: source.category || ''
         });
         setShowForm(true);
     };
@@ -161,7 +134,6 @@ export default function SourceManagement() {
         setFormData({
             source_name: '',
             rss_url: '',
-            category: ''
         });
         setEditingSource(null);
         setShowForm(false);
@@ -250,28 +222,6 @@ export default function SourceManagement() {
                             </div>
 
                             <div className="admin-form-group">
-                                <label htmlFor="category">Category *</label>
-                                <select
-                                    id="category"
-                                    name="category"
-                                    value={formData.category}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="admin-form-select"
-                                >
-                                    <option value="">Select Category</option>
-                                    {sourceCategories.map(category => (
-                                        <option key={category} value={category}>
-                                            {category}
-                                        </option>
-                                    ))}
-                                </select>
-                                <small className="admin-form-help">
-                                    Select the primary category for this news source
-                                </small>
-                            </div>
-
-                            <div className="admin-form-group admin-form-group-full">
                                 <label htmlFor="rss_url">RSS URL *</label>
                                 <div className="admin-input-group">
                                     <input
@@ -321,10 +271,8 @@ export default function SourceManagement() {
                             <tr>
                                 <th>ID</th>
                                 <th>Source Name</th>
-                                <th>Category</th>
                                 <th>RSS URL</th>
                                 <th>Status</th>
-                                <th>Created</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -332,10 +280,7 @@ export default function SourceManagement() {
                             {filteredSources.length === 0 ? (
                                 <tr>
                                     <td colSpan="7" className="admin-table-empty">
-                                        {selectedCategoryFilter
-                                            ? `No sources found for category: ${selectedCategoryFilter}`
-                                            : 'No sources found'
-                                        }
+                                        'No sources found'
                                     </td>
                                 </tr>
                             ) : (
@@ -344,11 +289,6 @@ export default function SourceManagement() {
                                         <td>#{source.id}</td>
                                         <td className="admin-table-title">
                                             <strong>{source.source_name}</strong>
-                                        </td>
-                                        <td>
-                                            <span className="admin-category-badge">
-                                                {source.category || 'N/A'}
-                                            </span>
                                         </td>
                                         <td className="admin-table-url">
                                             <a
@@ -366,12 +306,6 @@ export default function SourceManagement() {
                                             <span className="admin-status-badge admin-status-active">
                                                 Active
                                             </span>
-                                        </td>
-                                        <td>
-                                            {source.created_at
-                                                ? formatDate(source.created_at)
-                                                : 'N/A'
-                                            }
                                         </td>
                                         <td>
                                             <div className="admin-table-actions">
@@ -425,14 +359,6 @@ export default function SourceManagement() {
                     <div className="admin-stat">
                         <span className="admin-stat-number">{sources.filter(s => s.rss_url).length}</span>
                         <span className="admin-stat-label">Active RSS Feeds</span>
-                    </div>
-                    <div className="admin-stat">
-                        <span className="admin-stat-number">{sources.filter(s => s.category).length}</span>
-                        <span className="admin-stat-label">Categorized Sources</span>
-                    </div>
-                    <div className="admin-stat">
-                        <span className="admin-stat-number">{categories.length}</span>
-                        <span className="admin-stat-label">Categories</span>
                     </div>
                 </div>
             </div>
