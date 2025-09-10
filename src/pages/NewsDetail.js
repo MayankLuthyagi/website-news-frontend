@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import SidebarNewsCard from '../components/SidebarNewsCard';
 import { Helmet } from 'react-helmet-async';
+import { useTheme } from '../contexts/ThemeContext';
 import config from '../config/config';
 import '../modern-theme.css';
 
@@ -23,6 +24,7 @@ function formatRelativeDate(dateString) {
 function NewsDetail() {
     const location = useLocation();
     const { title: urlTitle, id: newsId } = useParams();
+    const { isDarkMode } = useTheme();
     const [newsData, setNewsData] = useState(location.state?.newsData || null);
     const [relatedNews, setRelatedNews] = useState([]);
     const [sourceName, setSourceName] = useState('');
@@ -132,6 +134,10 @@ function NewsDetail() {
     useEffect(() => {
         if (!newsData) return;
 
+        console.log('NewsData:', newsData);
+        console.log('Available subcategory:', newsData.subcategory);
+        console.log('Available category:', newsData.category);
+
         // Set source name from newsData if available
         if (newsData?.source_name) {
             setSourceName(newsData.source_name);
@@ -156,22 +162,61 @@ function NewsDetail() {
             setSourceName('Unknown Source');
         }
 
-        // Fetch related news from Tech category only
+        // Fetch related news from same subcategory
         async function fetchRelatedNews() {
-            // Always fetch related news from Tech category
+            // Fetch related news based on current article's subcategory
             try {
-                const techCategory = 'Tech';
-                const response = await fetch(`${config.api.base}${config.api.news}?category=${encodeURIComponent(techCategory)}&limit=10`);
-                if (response.ok) {
-                    const data = await response.json();
-                    // Filter out current article (try both URL and title for safety)
-                    const filtered = data.filter(article => {
-                        if (article.title === newsData.title) return false;
-                        if (newsData.url && article.link && article.link === newsData.url) return false;
-                        if (newsData.link && article.link && article.link === newsData.link) return false;
-                        return true;
-                    });
-                    setRelatedNews(filtered.slice(0, 10));
+                const currentSubcategory = newsData.subcategory;
+                console.log('Current article subcategory:', currentSubcategory);
+
+                if (currentSubcategory) {
+                    const subcategoryEndpoint = `${config.api.base}${config.api.news}/subcategory/${encodeURIComponent(currentSubcategory)}?limit=10`;
+                    console.log('Fetching from subcategory endpoint:', subcategoryEndpoint);
+
+                    const response = await fetch(subcategoryEndpoint);
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Subcategory API response:', data);
+
+                        // Filter out current article (try both URL and title for safety)
+                        const filtered = data.news.filter(article => {
+                            if (article.title === newsData.title) return false;
+                            if (newsData.url && article.link && article.link === newsData.url) return false;
+                            if (newsData.link && article.link && article.link === newsData.link) return false;
+                            return true;
+                        });
+                        setRelatedNews(filtered.slice(0, 10));
+                    } else {
+                        console.log('Subcategory fetch failed, falling back to Tech category');
+                        // Fallback to category if subcategory fetch fails
+                        const techCategory = 'Tech';
+                        const fallbackResponse = await fetch(`${config.api.base}${config.api.news}?category=${encodeURIComponent(techCategory)}&limit=10`);
+                        if (fallbackResponse.ok) {
+                            const fallbackData = await fallbackResponse.json();
+                            const filtered = fallbackData.filter(article => {
+                                if (article.title === newsData.title) return false;
+                                if (newsData.url && article.link && article.link === newsData.url) return false;
+                                if (newsData.link && article.link && article.link === newsData.link) return false;
+                                return true;
+                            });
+                            setRelatedNews(filtered.slice(0, 10));
+                        }
+                    }
+                } else {
+                    console.log('No subcategory available, using Tech category fallback');
+                    // No subcategory available, fallback to Tech category
+                    const techCategory = 'Tech';
+                    const response = await fetch(`${config.api.base}${config.api.news}?category=${encodeURIComponent(techCategory)}&limit=10`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const filtered = data.filter(article => {
+                            if (article.title === newsData.title) return false;
+                            if (newsData.url && article.link && article.link === newsData.url) return false;
+                            if (newsData.link && article.link && article.link === newsData.link) return false;
+                            return true;
+                        });
+                        setRelatedNews(filtered.slice(0, 10));
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching related news:', error);
@@ -202,7 +247,7 @@ function NewsDetail() {
 
     if (loading) {
         return (
-            <div className="news-detail-loading">
+            <div className={`news-detail-loading ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
                 <div className="loading-spinner"></div>
                 <p>Loading article...</p>
             </div>
@@ -212,7 +257,7 @@ function NewsDetail() {
     // Show loading state if we're fetching news by ID
     if (newsLoading) {
         return (
-            <div className="news-detail-loading">
+            <div className={`news-detail-loading ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
                 <p>Loading article...</p>
             </div>
         );
@@ -220,15 +265,15 @@ function NewsDetail() {
 
     if (!newsData) {
         return (
-            <div className="news-detail-error">
+            <div className={`news-detail-error ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
                 <h2>Article not found</h2>
                 <p>The requested article could not be loaded.</p>
             </div>
         );
     }
 
-    // Always set firstCategory to 'Tech'
-    const firstCategory = 'Tech';
+    // Use subcategory if available, otherwise fallback to category or 'Tech'
+    const firstCategory = newsData?.subcategory || newsData?.category || 'Tech';
     const categoryClass = `news-detail-category news-detail-category-${firstCategory.toLowerCase()}`;
 
     // Handle image source mapping - use category-based images
@@ -237,8 +282,9 @@ function NewsDetail() {
 
         // Use category-based image as fallback
         if (firstCategory) {
-            // Map category to proper image filename
+            // Map category/subcategory to proper image filename
             const categoryMapping = {
+                // Main categories
                 'business': 'Business',
                 'tech': 'Tech',
                 'technology': 'Tech',
@@ -250,7 +296,27 @@ function NewsDetail() {
                 'education': 'Education',
                 'finance': 'Finance',
                 'national': 'India',
-                'india': 'India'
+                'india': 'India',
+                // Tech subcategories - all map to Tech image
+                'ai': 'Tech',
+                'artificial intelligence': 'Tech',
+                'cybersecurity': 'Tech',
+                'quantum computing': 'Tech',
+                'ar/vr': 'Tech',
+                'edge computing': 'Tech',
+                '6g & iot': 'Tech',
+                'sustainable tech': 'Tech',
+                'internet': 'Tech',
+                'gaming': 'Tech',
+                'gadgets': 'Tech',
+                'cloud': 'Tech',
+                'semiconductors': 'Tech',
+                'web3': 'Tech',
+                'green tech': 'Tech',
+                'edtech': 'Tech',
+                'healthtech': 'Tech',
+                'autotech': 'Tech',
+                'space tech': 'Tech'
             };
 
             // Try exact match first, then lowercase match
@@ -270,7 +336,7 @@ function NewsDetail() {
             <Helmet>
                 <title>{newsData ? `${newsData.title} - Tech News Portal` : 'Tech News Article - Tech News Portal'}</title>
                 <meta name="description" content={newsData ? newsData.summary.substring(0, 160) + '...' : 'Read the latest tech news article with detailed coverage and analysis.'} />
-                <meta name="keywords" content={`Tech, news, ${sourceName}, breaking tech news, current events, AI, Cybersecurity, Quantum Computing, AR/VR, Edge Computing, 6G, IoT, Sustainable Tech, Gadgets, Internet, Gaming, Cloud, Semiconductors, Web3, Green Tech, EdTech, HealthTech, Autotech, Space Tech`} />
+                <meta name="keywords" content={`${firstCategory}, Tech, news, ${sourceName}, breaking tech news, current events, AI, Cybersecurity, Quantum Computing, AR/VR, Edge Computing, 6G, IoT, Sustainable Tech, Gadgets, Internet, Gaming, Cloud, Semiconductors, Web3, Green Tech, EdTech, HealthTech, Autotech, Space Tech`} />
 
                 {/* Open Graph Tags */}
                 <meta property="og:title" content={newsData ? newsData.title : 'Tech News Article'} />
@@ -293,9 +359,11 @@ function NewsDetail() {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             </Helmet>
 
-            <div className="news-detail-container">
+            <div className={`news-detail-container ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
                 <div className="news-detail-sidebar">
-                    <h3 className="related-news-title">Related Tech News</h3>
+                    <h3 className="related-news-title">
+                        {newsData?.subcategory ? `Related ${newsData.subcategory} News` : 'Related Tech News'}
+                    </h3>
                     <div className="related-news-list">
                         {relatedNews.length > 0 ? (
                             relatedNews.map((article, index) => (
@@ -307,7 +375,7 @@ function NewsDetail() {
                                     date={article.date}
                                     source_id={article.source_id}
                                     source_name={article.source_name}
-                                    category={article.category}
+                                    category={article.category || 'Tech'}
                                     image={article.image}
                                     newsData={article}
                                 />

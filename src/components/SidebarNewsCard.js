@@ -83,6 +83,7 @@ function SidebarNewsCard({ id, title, summary, url, date, source_id, source_name
         }
     }, [image, category]);
 
+    
     const handleImageError = () => {
         if (!imageError) {
             setImageError(true);
@@ -165,18 +166,12 @@ function SidebarNewsCard({ id, title, summary, url, date, source_id, source_name
             onClick={handleCardClick}
             style={{ cursor: 'pointer' }}
         >
-            <div className="sidebar-news-card-header">
-                <div className="news-category">
-                    <span className={categoryClass}>{firstCategory}</span>
-                </div>
-                <span className="sidebar-news-card-date">{sourceName} . {formatRelativeDate(date)}</span>
-            </div>
 
             <div className="sidebar-news-card-content">
                 <div className="sidebar-news-card-image">
                     {imageUrl && (
                         <img
-                            src={imageUrl}
+                            src={imageUrl }
                             alt={sourceName}
                             onError={handleImageError}
                         />

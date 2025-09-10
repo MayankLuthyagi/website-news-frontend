@@ -86,33 +86,6 @@ function ModernNewsCard({
         setImageUrl(null);
     };
 
-    const getCategoryColor = (cat) => {
-        const colors = {
-            'AI': '#00bcd4',
-            'Cybersecurity': '#ff5722',
-            'Quantum Computing': '#9c27b0',
-            'AR/VR': '#ff9800',
-            'Edge Computing': '#4caf50',
-            '6G & IoT': '#2196f3',
-            'Sustainable Tech': '#8bc34a',
-            'Internet': '#607d8b',
-            'Gaming': '#e91e63',
-            'Gadgets': '#795548',
-            'Cloud': '#00bcd4',
-            'Semiconductors': '#ffc107',
-            'Web3': '#673ab7',
-            'Green Tech': '#4caf50',
-            'EdTech': '#3f51b5',
-            'HealthTech': '#f44336',
-            'Autotech': '#9e9e9e',
-            'Space Tech': '#1a237e',
-            'Tech': '#00bcd4',
-            'Technology': '#00bcd4',
-            'default': '#00bcd4'
-        };
-        return colors[cat] || colors.default;
-    };
-
     const getVariantClass = () => {
         switch (variant) {
             case 'featured':
@@ -147,26 +120,10 @@ function ModernNewsCard({
                         onError={handleImageError}
                         loading="lazy"
                     />
-                    <div className="card-image-overlay">
-                        <span
-                            className="card-category"
-                            style={{ backgroundColor: getCategoryColor(subcategory) }}
-                        >
-                            {subcategory}
-                        </span>
-                    </div>
                 </div>
             )}
 
             <div className="card-content">
-                {!imageUrl && (
-                    <span
-                        className="card-category card-category-no-image"
-                        style={{ backgroundColor: getCategoryColor(subcategory) }}
-                    >
-                        {category}
-                    </span>
-                )}
 
                 <h3 className="card-title">{title}</h3>
 
