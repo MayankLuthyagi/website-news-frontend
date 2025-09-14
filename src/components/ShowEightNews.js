@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import ModernNewsCard from './news_cards/ModernNewsCard';
 import config from '../config/config';
-import '../modern-theme.css';
+
 export default function ShowEightNews({ category }) {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const getImageSource = (news) => {
-      if (news.image && news.image.trim() !== "") {
-        return news.image;
-      }
-      return "/images/Tech.png"; // fallback image
-    };
+    if (news.image && news.image.trim() !== "") {
+      return news.image;
+    }
+    return "/images/Tech.png"; // fallback image
+  };
   useEffect(() => {
     const fetchNews = async () => {
       setLoading(true);
@@ -20,14 +20,14 @@ export default function ShowEightNews({ category }) {
 
         // First try subcategory-specific tech news
         let endpoint = `${config.api.base}/api/news/subcategory/${encodeURIComponent(category)}?limit=8`;
-        
+
 
         let response = await fetch(endpoint);
-      
+
 
         if (response.ok) {
           const data = await response.json();
-          
+
 
           // Extract news array from subcategory response
           const newsArray = data.news || [];
@@ -40,12 +40,12 @@ export default function ShowEightNews({ category }) {
 
         // Fallback to Tech category with subcategory filter
         endpoint = `${config.api.base}/api/news/category/Tech?subcategory=${encodeURIComponent(category)}&limit=8`;
-        
+
 
         response = await fetch(endpoint);
         if (response.ok) {
           const data = await response.json();
-          
+
 
           const newsArray = data.news || [];
           if (newsArray.length > 0) {
@@ -58,7 +58,6 @@ export default function ShowEightNews({ category }) {
         }
 
       } catch (error) {
-        console.error(`Error fetching ${category} tech news:`, error);
         setNewsList([]);
       } finally {
         setLoading(false);
@@ -87,7 +86,7 @@ export default function ShowEightNews({ category }) {
             image={getImageSource(news)}
             date={news.date}
             category={news.category}
-            subcategory={news.subcategory}            
+            subcategory={news.subcategory}
             summary={news.summary}
             source_id={news.source_id}
             source_name={news.source_name}

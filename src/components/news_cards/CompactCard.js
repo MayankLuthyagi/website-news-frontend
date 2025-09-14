@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../../config/config';
-import '../../modern-theme.css';
+
 
 function formatRelativeDate(dateString) {
     const dateObj = new Date(dateString);

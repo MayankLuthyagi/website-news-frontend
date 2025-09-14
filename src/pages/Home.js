@@ -1,11 +1,8 @@
 import TrendingNews from "../components/ShowTrendingNews";
 import NewsDifferentType from "../components/NewsDifferentType";
 import NewsTicker from "../components/NewsTicker";
-import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import '../modern-theme.css';
 import ShowTodayNews from "../components/ShowTodayNews";
-import HeroTrendingNews from "../components/HeroTrendingNews";
 
 export default function Home() {
     return (

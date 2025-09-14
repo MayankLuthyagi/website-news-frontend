@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SideModernNewsCard from './news_cards/SideModernNewsCard';
 import config from '../config/config';
-import '../modern-theme.css';
+
 export default function ShowTodayNews({ category }) {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +40,6 @@ export default function ShowTodayNews({ category }) {
           }
         }
       } catch (error) {
-        console.error('Error fetching trending tech news:', error);
         // Don't fallback to other categories - just show empty
         setNewsList([]);
       } finally {
@@ -51,12 +50,12 @@ export default function ShowTodayNews({ category }) {
     fetchNews();
   }, [category]); // <-- add category here
 
-    const getImageSource = (news) => {
-      if (news.image && news.image.trim() !== "") {
-        return news.image;
-      }
-      return "/images/Tech.png"; // fallback image
-    };
+  const getImageSource = (news) => {
+    if (news.image && news.image.trim() !== "") {
+      return news.image;
+    }
+    return "/images/Tech.png"; // fallback image
+  };
   return (
     <>
 

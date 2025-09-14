@@ -43,9 +43,6 @@ function ModernNewsCard({
     const handleCardClick = (e) => {
         e.preventDefault();
 
-        console.log('ModernNewsCard click - ID:', id);
-        console.log('ModernNewsCard click - title:', title);
-
         // Create URL-friendly title with dashes
         const urlFriendlyTitle = title.toLowerCase()
             .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
@@ -70,8 +67,6 @@ function ModernNewsCard({
             // Flag to indicate this data needs to be fetched for complete content
             needsFullFetch: true
         };
-
-        console.log('ModernNewsCard - passing newsData:', newsData);
 
         // Navigate to news detail page using title-based route
         navigate(`/news/${urlFriendlyTitle}`, {

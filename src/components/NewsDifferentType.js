@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import ShowEightNews from './ShowEightNews';
-import '../modern-theme.css';
 
 export default function NewsDifferentType() {
     const [selectedType, setSelectedType] = useState('AI');

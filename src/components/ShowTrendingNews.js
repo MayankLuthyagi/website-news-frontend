@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ModernNewsCard from './news_cards/ModernNewsCard';
 import config from '../config/config';
-import '../modern-theme.css';
+
 export default function TrendingNews({ title, type }) {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,6 @@ export default function TrendingNews({ title, type }) {
           }
         }
       } catch (error) {
-        console.error('Error fetching tech news:', error);
         // Don't fallback to other categories - just show empty
         setNewsList([]);
       } finally {
