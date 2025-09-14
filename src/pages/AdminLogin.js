@@ -58,7 +58,7 @@ export default function AdminLogin() {
                 <meta name="robots" content="noindex, nofollow" />
             </Helmet>
 
-            <div className="admin-login-container">
+            <div className="admin-login-container admin-login-dark">
                 <div className="admin-login-card">
                     <div className="admin-login-header">
                         <h1>Admin Login</h1>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../config/config';
-import '../modern-theme.css';
+
 
 export default function NewsTicker() {
     const [tickerNews, setTickerNews] = useState([]);
@@ -34,7 +34,6 @@ export default function NewsTicker() {
                     }
                 }
             } catch (error) {
-                console.error('Error fetching ticker news:', error);
                 // Fallback to some default headlines if API fails
                 setTickerNews([
                     {

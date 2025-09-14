@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ModernNewsCard from "./news_cards/ModernNewsCard";
 import config from "../config/config";
-import '../modern-theme.css';
 
 export default function HeroTrendingNews() {
     const [trendingNews, setTrendingNews] = useState([]);
@@ -13,17 +12,14 @@ export default function HeroTrendingNews() {
             try {
                 // Try Tech trending news first
                 const endpoint = `${config.api.base}/api/news/getTrendingNews?category=Tech&limit=4`;
-                console.log('HeroTrendingNews - Tech endpoint:', endpoint);
 
                 const response = await fetch(endpoint);
-                console.log('HeroTrendingNews - Response status:', response.status);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
-                console.log('HeroTrendingNews - Tech data:', data);
 
                 // Check if we have actual data
                 if (Array.isArray(data) && data.length > 0) {
@@ -31,18 +27,15 @@ export default function HeroTrendingNews() {
                 } else {
                     // Try category endpoint as secondary option
                     const categoryEndpoint = `${config.api.base}/api/news/category/Tech?limit=4`;
-                    console.log('HeroTrendingNews - Category endpoint:', categoryEndpoint);
 
                     const categoryResponse = await fetch(categoryEndpoint);
                     if (categoryResponse.ok) {
                         const categoryData = await categoryResponse.json();
-                        console.log('HeroTrendingNews - Category data:', categoryData);
 
                         // Check if we have actual tech news
                         if (categoryData.news && categoryData.news.length > 0) {
                             setTrendingNews(categoryData.news.slice(0, 4));
                         } else {
-                            console.log('No tech trending news found in database');
                             setTrendingNews([]);
                         }
                     } else {
@@ -50,7 +43,6 @@ export default function HeroTrendingNews() {
                     }
                 }
             } catch (error) {
-                console.error('Error fetching tech trending news:', error);
                 // Don't fallback to other categories - just show empty
                 setTrendingNews([]);
             } finally {

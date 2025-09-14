@@ -92,7 +92,6 @@ export default function NewsManagement({ selectedCategory, allowFilter }) {
                 setError('Failed to fetch news');
             }
         } catch (error) {
-            console.error('Error fetching news:', error);
             setError('Failed to fetch news');
         } finally {
             setLoading(false);
@@ -106,11 +105,10 @@ export default function NewsManagement({ selectedCategory, allowFilter }) {
                 const data = await response.json();
                 setSources(Array.isArray(data) ? data : []);
             } else {
-                console.error('Failed to fetch sources');
                 setSources([]);
             }
         } catch (error) {
-            console.error('Error fetching sources:', error);
+            setError('Failed to fetch sources');
             setSources([]);
         }
     };
@@ -155,9 +153,6 @@ export default function NewsManagement({ selectedCategory, allowFilter }) {
 
             // Remove the 'date' field and use 'pub_date' instead
             delete submitData.date;
-
-            console.log('Submitting data:', submitData); // Debug log
-
             const response = await fetch(url, {
                 method,
                 headers: {
@@ -291,7 +286,6 @@ export default function NewsManagement({ selectedCategory, allowFilter }) {
     const updateNewsAllowStatus = async (id, allowStatus) => {
         try {
             const url = `${config.api.base}${config.api.news}/${id}/allow`;
-            console.log('Updating news allow status - URL:', url, 'Data:', { allow: allowStatus });
 
             const response = await fetch(url, {
                 method: 'PUT',
@@ -300,8 +294,6 @@ export default function NewsManagement({ selectedCategory, allowFilter }) {
                 },
                 body: JSON.stringify({ allow: allowStatus })
             });
-
-            console.log('Response status:', response.status);
 
             if (response.ok) {
                 // Update the local state immediately without refetching all news

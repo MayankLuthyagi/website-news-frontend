@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../modern-theme.css';
+
 
 function formatRelativeDate(dateString) {
     const dateObj = new Date(dateString);
@@ -153,7 +153,7 @@ function FullImageCard({ id, title, summary, url, date, source_id, source_name, 
         return finalText + '...';
     };
     const trimTitle = (str, val) => {
-        if (!str || str=='') return 'Briefli Special...';
+        if (!str || str == '') return 'Briefli Special...';
         const trimmed = str.length > val ? str.substring(0, val) + '...' : str;
         return trimmed;
     }

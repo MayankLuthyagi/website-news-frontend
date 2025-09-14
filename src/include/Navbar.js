@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
-import '../modern-theme.css';
+
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

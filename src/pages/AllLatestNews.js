@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ModernNewsCard from '../components/news_cards/ModernNewsCard';
 import SideModernNewsCard from '../components/news_cards/SideModernNewsCard';
 import '../index.css';
-import '../modern-theme.css';
+
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from '../contexts/ThemeContext';
 import config from '../config/config';
@@ -17,17 +17,14 @@ export default function AllLatestNews() {
       try {
         // Fetch Tech latest news using correct API structure
         const endpoint = `${config.api.base}/api/news/getLatestNews?category=Tech&limit=1000`;
-        console.log('AllLatestNews - Tech endpoint:', endpoint);
 
         const response = await fetch(endpoint);
-        console.log('AllLatestNews - Response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('AllLatestNews - Tech data:', data);
 
         // Check if we have actual tech news data
         if (Array.isArray(data) && data.length > 0) {
@@ -41,7 +38,6 @@ export default function AllLatestNews() {
           const categoryResponse = await fetch(`${config.api.base}/api/news/category/Tech`);
           if (categoryResponse.ok) {
             const categoryData = await categoryResponse.json();
-            console.log('AllLatestNews - Category data:', categoryData);
 
             // Check if we have actual tech news
             if (categoryData.news && categoryData.news.length > 0) {
@@ -50,7 +46,6 @@ export default function AllLatestNews() {
               );
               setNewsList(uniqueNews);
             } else {
-              console.log('No tech news found in database');
               setNewsList([]);
             }
           } else {

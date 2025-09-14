@@ -6,7 +6,6 @@ import CompactCard from '../components/news_cards/CompactCard';
 import FullImageCard from '../components/news_cards/FullImageCard';
 import SideImageCard from '../components/news_cards/SideImageCard';
 import '../index.css';
-import '../modern-theme.css';
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from '../contexts/ThemeContext';
 import config from '../config/config';
@@ -89,18 +88,13 @@ export default function CategoryNews() {
                     endpoint = `${config.api.base}/api/news/category/${categoryName}`;
                 }
 
-                console.log('CategoryNews - Endpoint:', endpoint);
-                console.log('CategoryNews - Is subcategory:', isSubcategory);
-
                 const response = await fetch(endpoint);
-                console.log('CategoryNews - Response status:', response.status);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
-                console.log('CategoryNews - Received data:', data);
 
                 // Extract news array based on response structure
                 let newsArray = [];
@@ -111,8 +105,6 @@ export default function CategoryNews() {
                     // Category response: { category, total, news: [...] }
                     newsArray = data.news || [];
                 }
-
-                console.log('CategoryNews - News array:', newsArray);
 
                 // Filter out invalid entries and remove duplicates
                 const validNews = newsArray.filter(news =>
@@ -130,7 +122,6 @@ export default function CategoryNews() {
                     )
                 );
 
-                console.log('CategoryNews - Final unique news:', uniqueNews);
                 setNewsList(uniqueNews);
 
             } catch (error) {
@@ -138,7 +129,6 @@ export default function CategoryNews() {
                 // Fallback to Tech category if it's a tech-related request
                 try {
                     const fallbackEndpoint = `${config.api.base}/api/news/category/Tech`;
-                    console.log('CategoryNews - Fallback endpoint:', fallbackEndpoint);
 
                     const fallbackResponse = await fetch(fallbackEndpoint);
                     if (fallbackResponse.ok) {

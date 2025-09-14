@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../config/config';
-import '../modern-theme.css';
+
 
 function formatRelativeDate(dateString) {
     const dateObj = new Date(dateString);
@@ -37,7 +37,6 @@ function SidebarNewsCard({ id, title, summary, url, date, source_id, source_name
                         setSourceName('Unknown Source');
                     }
                 } catch (error) {
-                    console.error('Error fetching source name:', error);
                     setSourceName('Unknown Source');
                 }
             }
@@ -83,7 +82,7 @@ function SidebarNewsCard({ id, title, summary, url, date, source_id, source_name
         }
     }, [image, category]);
 
-    
+
     const handleImageError = () => {
         if (!imageError) {
             setImageError(true);
@@ -171,7 +170,7 @@ function SidebarNewsCard({ id, title, summary, url, date, source_id, source_name
                 <div className="sidebar-news-card-image">
                     {imageUrl && (
                         <img
-                            src={imageUrl }
+                            src={imageUrl}
                             alt={sourceName}
                             onError={handleImageError}
                         />
